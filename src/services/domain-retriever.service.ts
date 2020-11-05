@@ -64,7 +64,10 @@ export class DomainRetrieverService {
         });
 
         let date = moment().subtract(1, 'days').format("YYYY-DD-MM");
-        let browser = await puppeteer.launch();
+        let browser = await puppeteer.launch({
+            headless: true,
+            args: ['--no-sandbox']
+        });
         let page = await browser.newPage();
 
         for await (const line of rl) {

@@ -5,7 +5,7 @@ export class MysqlHelper {
         host: "localhost",
         user: "parsify",
         password: "parsify",
-        database: "parsify_db"
+        database: "parsify_db2"
     });
 
     constructor() { }
@@ -13,7 +13,7 @@ export class MysqlHelper {
     public async query(sqlQuery: string, values: any[], callback?: Function) {
         await this.con.query(sqlQuery, values, (error: any, results: any) => {
             if (error) {
-                console.log(error);
+                console.log("[LOG] [ERROR] Error Querying database : " + error.code);
             };
 
             if (callback) {

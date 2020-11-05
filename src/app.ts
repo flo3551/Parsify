@@ -9,9 +9,9 @@ export class App {
     }
 
     public async init() {
-        console.log("app inited");
-        let domainRetrieverJob = schedule.scheduleJob('30 9 * * *', () => {
-            console.log("domainRetrieverJob launched");
+        console.log("[LOG] ","app inited");
+        let domainRetrieverJob = schedule.scheduleJob('40 23 * * *', () => {
+            console.log("[LOG] ", "domainRetrieverJob launched");
             this.domainRetrieverService.downloadYesterdayRegisteredDomains()
         });
     }

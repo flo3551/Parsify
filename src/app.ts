@@ -10,7 +10,7 @@ export class App {
 
     public async init() {
         console.log("app inited");
-        let domainRetrieverJob = schedule.scheduleJob('40 23 * * *', () => {
+        let domainRetrieverJob = schedule.scheduleJob('30 9 * * *', () => {
             console.log("domainRetrieverJob launched");
             this.domainRetrieverService.downloadYesterdayRegisteredDomains()
         });

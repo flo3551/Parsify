@@ -1,4 +1,4 @@
-import { Domain } from "../models/domain.model";
+/* import { Domain } from "../models/domain.model";
 import { DomainsService } from "./domains.service";
 var exec = require('child_process').exec;
 
@@ -9,7 +9,7 @@ let fs = require('fs');
 let moment = require('moment');
 let unzipper = require('unzipper');
 let readline = require('readline');
-
+a
 export class DomainRetrieverService {
     private domainsService: DomainsService;
 
@@ -134,4 +134,4 @@ export class DomainRetrieverService {
 
         return this.DOMAINS_LIST_DOWNLOAD_URL_FIRST_PART + Buffer.from(this.downloadedFileName).toString('base64') + this.DOMAINS_LIST_DOWNLOAD_URL_SECOND_PART;
     }
-}
+} */

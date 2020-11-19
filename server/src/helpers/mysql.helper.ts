@@ -10,10 +10,13 @@ export class MysqlHelper {
 
     constructor() { }
 
-    public async query(sqlQuery: string, values: any[], callback?: Function) {
+    public async query(sqlQuery: string, values: any[], callback?: Function, errorCallback?: Function) {
         await this.con.query(sqlQuery, values, (error: any, results: any) => {
             if (error) {
                 console.log("[LOG] [ERROR] Error Querying database : " + error.code);
+                if (errorCallback) {
+                    errorCallback(error);
+                }
             };
 
             if (callback) {

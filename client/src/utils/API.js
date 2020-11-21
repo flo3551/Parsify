@@ -2,7 +2,7 @@ import axios from "axios";
 const headers = {
     "Content-Type": "application/json"
 };
-// const burl = "http://localhost:3000";
+// const burl = "http://localhost:3001";
 const burl = "http://51.77.149.226:3001";
 
 export default {
@@ -36,5 +36,8 @@ export default {
     },
     getCountDomains: function () {
         return axios.get(`${burl}/getDomainsCount`, { headers: headers });
+    },
+    getDomainScreenshot: function (domainName) {
+        return axios.get(`${burl}/getDomainsScreenshot`, { params: { domainName: domainName }, headers: headers });
     }
 };

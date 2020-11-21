@@ -14,5 +14,6 @@ export class DomainsRoute {
         // this.app.get('/getDomainsList', this.domainController.getDomainsList.bind(this.domainController));
         this.app.get('/getDomainsForPage', this.domainController.getDomainsForPage.bind(this.domainController));
         this.app.get('/getDomainsCount', this.domainController.getDomainsCount.bind(this.domainController));
+        this.app.get('/getDomainsScreenshot', this.domainController.getDomainsScreenshot.bind(this.domainController));
     }
 }

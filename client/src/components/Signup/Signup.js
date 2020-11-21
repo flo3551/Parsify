@@ -23,7 +23,7 @@ export class Signup extends React.Component {
         }
 
         try {
-            API.signup(email, password)
+            await API.signup(email, password)
                 .then((response) => {
                     localStorage.setItem("token", response.data.token);
                     window.location = "/dashboard";

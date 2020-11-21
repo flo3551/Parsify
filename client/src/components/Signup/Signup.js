@@ -14,11 +14,11 @@ export class Signup extends React.Component {
     send = async () => {
         const { email, password, confirmPassword } = this.state;
         if (!email || email.length === 0) {
-            // handle form validation
+            // TODO: handle form validation
             return;
         }
         if (!password || password.length === 0 || password !== confirmPassword) {
-            // handle form validation
+            // TODO: handle form validation
             return;
         }
 
@@ -27,6 +27,9 @@ export class Signup extends React.Component {
                 .then((response) => {
                     localStorage.setItem("token", response.data.token);
                     window.location = "/dashboard";
+                })
+                .catch(error => {
+                    // TODO: handle error
                 })
         } catch (error) {
             // handle error

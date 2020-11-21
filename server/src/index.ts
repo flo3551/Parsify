@@ -7,7 +7,7 @@ const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
 const app = express();
-const port = 3000;
+const port = 3001;
 
 //Body Parser
 const urlencodedParser = bodyParser.urlencoded({

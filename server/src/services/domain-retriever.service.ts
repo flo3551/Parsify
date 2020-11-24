@@ -58,7 +58,7 @@ export class DomainRetrieverService {
             const fileName = entry.path;
 
             if (fileName.includes(this.DOWNLOADED_TXT_FILE_NAME)) {
-                let txtFilePath = this.DOWNLOADED_FILE_OUTPUT_DIR + this.DOWNLOADED_TXT_FILE_NAME + moment().subtract(1, 'days').format("YYYY-DD-MM") + this.TXT_FILE_EXTENSION;
+                let txtFilePath = this.DOWNLOADED_FILE_OUTPUT_DIR + this.DOWNLOADED_TXT_FILE_NAME + moment().subtract(1, 'days').format("YYYY-MM-DD") + this.TXT_FILE_EXTENSION;
                 entry.pipe(fs.createWriteStream(txtFilePath));
 
                 await this.readTxtFile(txtFilePath);
@@ -97,7 +97,7 @@ export class DomainRetrieverService {
                     console.log("[LOG] ", domain.domainName + " => isShopify : " + isShopify);
                     if (isShopify) {
                         this.LOG_COUNTER_SHOPIFY_FOUND++;
-                        domain.lastTimeCheckedDate = moment().format("YYYY-DD-MM");
+                        domain.lastTimeCheckedDate = moment().format("YYYY-MM-DD");
                         domain.isShopify = isShopify;
 
                         return this.domainsService.insertDomain(domain)
@@ -138,7 +138,7 @@ export class DomainRetrieverService {
         let yesterdayDate = moment().subtract(1, 'days');
         let formattedDate = moment(yesterdayDate).format("YYYY-MM-DD").toString();
         this.downloadedFileName = formattedDate + this.DOWNLOADED_FILE_EXTENSION;
-        this.dateRegistrationDomain = yesterdayDate;
+        this.dateRegistrationDomain = yesterdayDate.format("YYYY-MM-DD");
         this.LOG_DATE_DOMAINS_CHECKED = formattedDate;
 
         return this.DOMAINS_LIST_DOWNLOAD_URL_FIRST_PART + Buffer.from(this.downloadedFileName).toString('base64') + this.DOMAINS_LIST_DOWNLOAD_URL_SECOND_PART;

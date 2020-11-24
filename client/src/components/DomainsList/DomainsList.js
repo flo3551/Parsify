@@ -1,8 +1,9 @@
 import React from "react";
-import { Table, Row } from "react-bootstrap";
-import API from "../../utils/API";
+import { Row, Table } from "react-bootstrap";
 import { FiArrowRightCircle } from "react-icons/fi";
+import API from "../../utils/API";
 import { CustomPagination } from "../CustomPagination/CustomPagination";
+import { SearchFilter } from "../SearchFilter/SearchFilter";
 
 export class DomainsList extends React.Component {
     state = {
@@ -23,7 +24,11 @@ export class DomainsList extends React.Component {
     }
 
     onChangePage = (newPage) => {
-        this.setState({currentPage: newPage}, this._updateDomains);
+        this.setState({ currentPage: newPage }, this._updateDomains);
+    }
+
+    onSearchNewDomains = (event) => {
+        this.setState({ domains: event.domainsList, domainsCount: event.domainsCount, currentPage: 1 })
     }
 
     _updateDomains = () => {
@@ -41,17 +46,19 @@ export class DomainsList extends React.Component {
         return this.state.selectedDomain === domain;
     }
 
+    onChangeNbResultsPerPage = (nbResults) => {
+        this.setState({ resultsDisplayPerPage: nbResults }, this._updateDomains)
+    }
+
     render() {
         return (
             <div>
                 <Row className="justify-content-center">
+                    <SearchFilter onDomainsSearch={this.onSearchNewDomains} onChangeNbResultsPerPage={this.onChangeNbResultsPerPage} />
                     <Table striped bordered hover>
-                        <thead>
-                            {/* FILTERS COMES HERE */}
-                        </thead>
                         <tbody>
                             {this.state.domains.map((domain, index) => (
-                                <tr className={this.isSelectedDomain(domain) ? "bg-secondary text-light" : ""}>
+                                <tr key={index} className={this.isSelectedDomain(domain) ? "bg-secondary text-light" : ""}>
                                     <td onClick={() => { this.onClickDomainRow(domain) }}>
                                         {domain.domainName}
 
@@ -62,7 +69,7 @@ export class DomainsList extends React.Component {
                         </tbody>
                     </Table>
 
-                    <CustomPagination currentPage={this.state.currentPage} totalResults={this.state.domainsCount} pageChangeHandler={this.onChangePage}/>
+                    <CustomPagination currentPage={this.state.currentPage} totalResults={this.state.domainsCount} pageChangeHandler={this.onChangePage} />
                 </Row>
             </div>
         )

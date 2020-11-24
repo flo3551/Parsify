@@ -21,20 +21,16 @@ export class Login extends React.Component {
             return;
         }
 
-        try {
-            await API.login(email, password)
-                .then(response => {
-                    localStorage.setItem("token", response.data.token);
-                    window.location = "/dashboard";
-                })
-                .catch(error => {
-                    console.error(error);
-                })
-        }
-        catch (error) {
-            console.error(error);
-        }
-    };
+        return API.login(email, password)
+            .then(response => {
+                localStorage.setItem("token", response.data.token);
+                window.location = "/dashboard";
+            })
+            .catch(error => {
+                console.error(error);
+            })
+    }
+
 
     handleChange = (event) => {
         this.setState({

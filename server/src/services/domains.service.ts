@@ -13,6 +13,9 @@ export class DomainsService {
     private readonly SELECT_DOMAINS_RANGE_SQL = "SELECT * from domains WHERE isShopify=1 LIMIT ? OFFSET ?"
     private readonly SELECT_COUNT_DOMAIN_SQL = "SELECT COUNT(domainName) as nbDomains from domains WHERE isShopify=1"
     private readonly SELECT_COUNT_DAILY_DOMAIN_TO_CHECK_SQL = "SELECT COUNT(domainName) as nbDomains from domains WHERE dateRegistration=? and isShopify=1"
+    private readonly CLAUSE_SELECT_DOMAINS = "SELECT * from domains ";
+    private readonly CLAUSE_LITMIT_OFFSET = " LIMIT ?";
+    private readonly CLAUSE_SELECT_COUNT_DOMAINS = "SELECT count(domainName) from domains ";
     // private readonly SELECT_DOMAINS_LIST = "SELECT * from domains LIMIT 15";
 
     constructor() {
@@ -55,6 +58,30 @@ export class DomainsService {
             })
     }
 
+    public countFilteredDomains(exactDate?: Date, minDate?: Date, maxDate?: Date, keyword?: string): any {
+        return new Promise((resolve, reject) => {
+            this.db.query(this.CLAUSE_SELECT_COUNT_DOMAINS + this._buildWhereClause(exactDate, minDate, maxDate, keyword), [], resolve, reject);
+        })
+            .then((results: any) => {
+                return Promise.resolve(results[0].nbDomains);
+            })
+    }
+
+    public selectFilteredDomains(limit: number, exactDate?: Date, minDate?: Date, maxDate?: Date, keyword?: string,) {
+        return new Promise((resolve, reject) => {
+            this.db.query(this.CLAUSE_SELECT_DOMAINS + this._buildWhereClause(exactDate, minDate, maxDate, keyword) + this.CLAUSE_LITMIT_OFFSET, [limit], resolve, reject);
+        })
+            .then((results: any) => {
+                let domains = this._mapResultsToDomains(results);
+
+                return Promise.resolve(domains);
+            })
+            .catch((error: any) => {
+                console.log(error);
+                return [];
+            })
+    }
+
     public queuingUpdateDomain() {
         if (!this.hasQueuingUpdateStarted) {
             this.hasQueuingUpdateStarted = true;
@@ -78,5 +105,26 @@ export class DomainsService {
 
     private _mapResultToDomain(result: any) {
         return new Domain(result.domainName, result.dateRegistration, result.lastTimeCheckedDate, result.isShopify, result.numberChecked)
+    }
+
+    private _buildWhereClause(exactDate?: Date, minDate?: Date, maxDate?: Date, keyword?: string) {
+        let whereClause = "WHERE 1=1";
+        if (exactDate) {
+            whereClause += " AND dateRegistration = '" + moment(exactDate).format('YYYY-MM-DD').toString() + "'";
+        } else {
+            if (minDate) {
+                whereClause += " AND dateRegistration >= '" + moment(minDate).format('YYYY-MM-DD').toString() + "'";
+            }
+
+            if (maxDate) {
+                whereClause += " AND dateRegistration <= '" + moment(maxDate).format('YYYY-MM-DD').toString() + "'";
+            }
+        }
+
+        if (keyword) {
+            whereClause += " AND domainName LIKE '%" + keyword + "%'";
+        }
+
+        return whereClause;
     }
 }

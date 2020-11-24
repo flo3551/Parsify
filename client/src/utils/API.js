@@ -31,13 +31,19 @@ export default {
     getDomainsList: function () {
         return axios.get(`${burl}/getDomainsList`, { headers: headers });
     },
-    getDomainsForPage: function (page, nbResultsPerPage) {
-        return axios.get(`${burl}/getDomainsForPage`, { params: { page: page.toString(), nbResultsPerPage: nbResultsPerPage.toString() }, headers: headers });
+    getDomainsForPage: function (currentPage, nbResultsPerPage) {
+        return axios.get(`${burl}/getDomainsForPage`, { params: { page: currentPage.toString(), nbResultsPerPage: nbResultsPerPage.toString() }, headers: headers });
     },
     getCountDomains: function () {
         return axios.get(`${burl}/getDomainsCount`, { headers: headers });
     },
     getDomainScreenshot: function (domainName) {
         return axios.get(`${burl}/getDomainsScreenshot`, { params: { domainName: domainName }, headers: headers });
-    }
+    },
+    getFilteredDomains: function (nbResultsPerPage, exactDate, minDate, maxDate, keyword) {
+        return axios.get(`${burl}/getFilteredDomains`, { params: { nbResultsPerPage: nbResultsPerPage.toString(), exactDate: exactDate, minDate: minDate, maxDate: maxDate, keyword: keyword }, headers: headers });
+    },
+    getCountFilteredDomains: function (exactDate, minDate, maxDate, keyword) {
+        return axios.get(`${burl}/getCountFilteredDomains`, { params: { exactDate: exactDate, minDate: minDate, maxDate: maxDate, keyword: keyword }, headers: headers });
+    },
 };

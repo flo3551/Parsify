@@ -22,19 +22,15 @@ export class Signup extends React.Component {
             return;
         }
 
-        try {
-            await API.signup(email, password)
-                .then((response) => {
-                    localStorage.setItem("token", response.data.token);
-                    window.location = "/dashboard";
-                })
-                .catch(error => {
-                    // TODO: handle error
-                })
-        } catch (error) {
-            // handle error
-            console.error(error);
-        }
+        return API.signup(email, password)
+            .then((response) => {
+                localStorage.setItem("token", response.data.token);
+                window.location = "/dashboard";
+            })
+            .catch(error => {
+                console.error(error);
+                // TODO: handle error
+            })
     };
 
     handleChange = (event) => {

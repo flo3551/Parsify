@@ -55,6 +55,51 @@ export class DomainController {
             })
     }
 
+
+    public async getFilteredDomains(req: any, res: any) {
+        try {
+            let nbResultsPerPage = parseInt(req.query.nbResultsPerPage);
+
+            let exactDate = req.query.exactDate ? new Date(req.query.exactDate) : undefined;
+            let minDate = req.query.minDate ? new Date(req.query.minDate) : undefined;
+            let maxDate = req.query.maxDate ? new Date(req.query.maxDate) : undefined;
+            let keyword = req.query.keyword ? encodeURIComponent(req.query.keyword.trim()) : undefined;
+
+            this.domainsService.selectFilteredDomains(nbResultsPerPage, exactDate, minDate, maxDate, keyword)
+                .then((domains: Domain[]) => {
+                    return res.status(200).json({
+                        domainsList: domains
+                    });
+                })
+                .catch((error: any) => {
+                    res.status(500).json(
+                        { error: "Erreur lors de la récupération des stores" }
+                    )
+                })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    public async getCountFilteredDomains(req: any, res: any) {
+        let exactDate = new Date(req.query.exactDate);
+        let minDate = new Date(req.query.minDate);
+        let maxDate = new Date(req.query.maxDate);
+        let keyword = req.query.keyword;
+
+        this.domainsService.countFilteredDomains(exactDate, minDate, maxDate, keyword)
+            .then((nbDomains: any) => {
+                return res.status(200).json({
+                    domainsCount: nbDomains
+                });
+            })
+            .catch((error: any) => {
+                return res.status(500).json(
+                    { error: "Erreur lors de la récupération des stores" }
+                )
+            })
+    }
+
     public async getDomainsScreenshot(req: any, res: any) {
         let domainName = req.query.domainName;
 

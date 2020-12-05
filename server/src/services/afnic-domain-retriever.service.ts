@@ -46,22 +46,22 @@ export class AfnicDomainRetrieverService {
     }
 
     public downloadYesterdayRegisteredDomains() {
-        // let url = this.prepareUrl();
-        // this.fileFormatConverterHelper.gifFileUrlToPng(url, this.downloadedFileNameNoExtension, this.DOWNLOADED_FILE_OUTPUT_DIR)
-        //     .then(() => {
+        let url = this.prepareUrl();
+        this.fileFormatConverterHelper.gifFileUrlToPng(url, this.downloadedFileNameNoExtension, this.DOWNLOADED_FILE_OUTPUT_DIR)
+            .then(() => {
 
-        //         return this.imageHelper.cutImageHorizontally(this.DOWNLOADED_FILE_OUTPUT_DIR, this.downloadedFileNameNoExtension + this.PNG_FILE_EXTENSION);
-        //     })
-        //     .then((imagePartsPaths: any) => {
+                return this.imageHelper.cutImageHorizontally(this.DOWNLOADED_FILE_OUTPUT_DIR, this.downloadedFileNameNoExtension + this.PNG_FILE_EXTENSION);
+            })
+            .then((imagePartsPaths: any) => {
 
-        //         return this.ocrHelper.saveTextFromImages(imagePartsPaths, this.DOWNLOADED_FILE_OUTPUT_DIR + this.downloadedFileNameNoExtension + this.TXT_FILE_EXTENSION);
-        //     })
-        //     .then(() => {
-        //         this.readTxtFile(this.DOWNLOADED_FILE_OUTPUT_DIR + this.downloadedFileNameNoExtension + this.TXT_FILE_EXTENSION);
-        //     })
-        //     .catch(error => {
-        //         console.log(error);
-        //     })
+                return this.ocrHelper.saveTextFromImages(imagePartsPaths, this.DOWNLOADED_FILE_OUTPUT_DIR + this.downloadedFileNameNoExtension + this.TXT_FILE_EXTENSION);
+            })
+            .then(() => {
+                this.readTxtFile(this.DOWNLOADED_FILE_OUTPUT_DIR + this.downloadedFileNameNoExtension + this.TXT_FILE_EXTENSION);
+            })
+            .catch(error => {
+                console.log(error);
+            })
     }
 
     private async readTxtFile(filePath: string) {

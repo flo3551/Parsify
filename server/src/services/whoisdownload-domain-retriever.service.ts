@@ -1,5 +1,6 @@
-import { Domain } from "../models/domain.model";
+import { Domain, DomainZone } from "../models/domain.model";
 import { DomainsService } from "./domains.service";
+import { FacebookPageService } from "./facebook-page.service";
 var exec = require('child_process').exec;
 
 const puppeteer = require('puppeteer');
@@ -10,8 +11,9 @@ let moment = require('moment');
 let unzipper = require('unzipper');
 let readline = require('readline');
 
-export class DomainRetrieverService {
+export class WhoIsDownloadDomainRetrieverService {
     private domainsService: DomainsService;
+    private facebookPageService: FacebookPageService;
 
     private readonly DOMAINS_LIST_DOWNLOAD_URL_FIRST_PART = "http://www.whoisdownload.com/download-panel/free-download-file/";
     private readonly DOMAINS_LIST_DOWNLOAD_URL_SECOND_PART = "/nrd/home";
@@ -33,6 +35,7 @@ export class DomainRetrieverService {
 
     constructor() {
         this.domainsService = new DomainsService();
+        this.facebookPageService = new FacebookPageService();
     }
 
     public downloadYesterdayRegisteredDomains() {
@@ -91,7 +94,8 @@ export class DomainRetrieverService {
 
         for await (const line of rl) {
             this.LOG_COUNTER_DOMAIN_CHECKED++;
-            let domain = new Domain(line, this.dateRegistrationDomain, '', false, 0);
+            let domain = new Domain(line, this.dateRegistrationDomain, '', false, 0, DomainZone.INTER);
+
             await this._isShopifyDomain(page, domain)
                 .then((isShopify: boolean) => {
                     console.log("[LOG] ", domain.domainName + " => isShopify : " + isShopify);
@@ -104,6 +108,9 @@ export class DomainRetrieverService {
                     }
                 })
                 .then(() => {
+                    if (domain.isShopify && domain.domainName) {
+                        this.facebookPageService.searchPage(domain.domainName);
+                    }
                     console.log("[LOG] ", "[" + this.LOG_DATE_DOMAINS_CHECKED + "]: " + this.LOG_COUNTER_DOMAIN_CHECKED + " domains checked of" + nbDomainsToCheck + " >>>  " + this.LOG_COUNTER_SHOPIFY_FOUND + " shopify found");
                 });
         }

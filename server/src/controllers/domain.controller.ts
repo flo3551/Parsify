@@ -64,8 +64,9 @@ export class DomainController {
             let minDate = req.query.minDate ? new Date(req.query.minDate) : undefined;
             let maxDate = req.query.maxDate ? new Date(req.query.maxDate) : undefined;
             let keyword = req.query.keyword ? encodeURIComponent(req.query.keyword.trim()) : undefined;
+            let zone = req.query.zone ? encodeURIComponent(req.query.zone.trim()) : undefined;
 
-            this.domainsService.selectFilteredDomains(nbResultsPerPage, exactDate, minDate, maxDate, keyword)
+            this.domainsService.selectFilteredDomains(nbResultsPerPage, exactDate, minDate, maxDate, keyword, zone)
                 .then((domains: Domain[]) => {
                     return res.status(200).json({
                         domainsList: domains

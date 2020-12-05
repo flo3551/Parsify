@@ -3,7 +3,7 @@ cd /usr/Apps/Parsify/server/
 #INSTALL SERVER DEPENDENCIES IF NOT EXISTS
 if ! [ -d "/usr/Apps/Parsify/server/node_modules" ]; then
   echo "Empty nodes_modules"
-  npm install
+  npm install --unsafe-perm
 fi
 
 # BUILD CLIENT APP

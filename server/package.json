@@ -23,9 +23,12 @@
   },
   "dependencies": {
     "@babel/core": "^7.12.3",
+    "axios": "^0.21.0",
     "body-parser": "^1.19.0",
+    "canvas": "^2.6.1",
     "express": "^4.17.1",
     "express-jwt": "^6.0.0",
+    "image-size": "^0.9.3",
     "jsdom": "^16.4.0",
     "jwt-simple": "^0.5.6",
     "moment": "^2.29.1",
@@ -34,6 +37,8 @@
     "password-hash": "^1.2.2",
     "puppeteer": "^5.4.1",
     "querystring-browser": "^1.0.4",
+    "request": "^2.88.2",
+    "sharp": "^0.26.3",
     "unzipper": "^0.10.11"
   }
 }

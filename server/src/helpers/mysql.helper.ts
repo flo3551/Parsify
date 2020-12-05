@@ -5,7 +5,7 @@ export class MysqlHelper {
         host: "localhost",
         user: "parsify",
         password: "parsify",
-        database: "parsify_db2"
+        database: "parsify_db"
     });
 
     constructor() { }

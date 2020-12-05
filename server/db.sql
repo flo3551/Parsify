@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS `domains` (
   `lastTimeCheckedDate` date DEFAULT NULL,
   `isShopify` tinyint(4) DEFAULT NULL,
   `numberChecked` int(11) DEFAULT NULL,
+  `zone` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=158530 DEFAULT CHARSET=utf8;
 
@@ -27,6 +28,14 @@ CREATE TABLE IF NOT EXISTS `users` (
   `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `facebook_page` (
+	`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	`pageName` VARCHAR(100),
+	`pageLink` VARCHAR(150),
+	`domainName` VARCHAR(100),
+	FOREIGN KEY (domainName) REFERENCES domains(domainName)
+)
 
 -- Les données exportées n'étaient pas sélectionnées.
 

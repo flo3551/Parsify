@@ -37,6 +37,14 @@ CREATE TABLE `facebook_page` (
 	FOREIGN KEY (domainName) REFERENCES domains(domainName)
 )
 
+CREATE TABLE `file_infos` (
+	`filePath` VARCHAR(100) NOT NULL DEFAULT '',
+	`linesCount` INT NOT NULL DEFAULT 0,
+	`parsedCount` INT NOT NULL DEFAULT 0,
+	 `zone` varchar(10) DEFAULT NULL,
+	PRIMARY KEY (`filePath`)
+)
+
 -- Les données exportées n'étaient pas sélectionnées.
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

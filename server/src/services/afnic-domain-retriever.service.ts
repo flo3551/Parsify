@@ -3,18 +3,20 @@ import { FileFormatConverter } from "../helpers/file-format-converter.helper";
 import { OCRHelper } from "../helpers/ocr.helper";
 import { Domain, DomainZone } from "../models/domain.model";
 import { DomainsService } from "./domains.service";
-var exec = require('child_process').exec;
+import { FileInfos } from "../models/file-infos.model";
+import { FileService } from "./file.service";
 
 const puppeteer = require('puppeteer');
-let fs = require('fs');
-let moment = require('moment');
-let readline = require('readline');
+const fs = require('fs');
+const moment = require('moment');
+const readline = require('readline');
 
 export class AfnicDomainRetrieverService {
     private domainsService: DomainsService;
     private ocrHelper: OCRHelper;
     private fileFormatConverterHelper: FileFormatConverter;
     private imageHelper: ImageHelper;
+    private fileService: FileService;
 
     private readonly DOMAINS_LIST_DOWNLOAD_URL_FIRST_PART = "https://www.afnic.fr/data/divers/public/publication-quotidienne/";
     private readonly DOMAINS_LIST_DOWNLOAD_URL_SECOND_PART = "_CREA_fr";
@@ -32,7 +34,7 @@ export class AfnicDomainRetrieverService {
     // LOGS
     private LOG_COUNTER_DOMAIN_CHECKED = 0;
     private LOG_COUNTER_SHOPIFY_FOUND = 0;
-    private LOG_DATE_DOMAINS_CHECKED = null;
+    public LOG_DATE_DOMAINS_CHECKED = null;
 
     public downloadedFileNameGifExtension: string = '';
     public downloadedFileNameNoExtension: string = '';
@@ -43,6 +45,7 @@ export class AfnicDomainRetrieverService {
         this.ocrHelper = new OCRHelper();
         this.fileFormatConverterHelper = new FileFormatConverter()
         this.imageHelper = new ImageHelper();
+        this.fileService = new FileService();
     }
 
     public downloadYesterdayRegisteredDomains() {
@@ -53,65 +56,71 @@ export class AfnicDomainRetrieverService {
                 return this.imageHelper.cutImageHorizontally(this.DOWNLOADED_FILE_OUTPUT_DIR, this.downloadedFileNameNoExtension + this.PNG_FILE_EXTENSION);
             })
             .then((imagePartsPaths: any) => {
+                console.log("call save text");
 
                 return this.ocrHelper.saveTextFromImages(imagePartsPaths, this.DOWNLOADED_FILE_OUTPUT_DIR + this.downloadedFileNameNoExtension + this.TXT_FILE_EXTENSION);
             })
             .then(() => {
+                console.log("ocr finished");
+
                 this.readTxtFile(this.DOWNLOADED_FILE_OUTPUT_DIR + this.downloadedFileNameNoExtension + this.TXT_FILE_EXTENSION);
             })
             .catch(error => {
+                console.log("CATCHED");
+
                 console.log(error);
             })
     }
 
-    private async readTxtFile(filePath: string) {
+    public async readTxtFile(filePath: string) {
         let browser = await puppeteer.launch({
             headless: true,
             args: ['--no-sandbox']
         });
         let page = await browser.newPage();
 
-        // LOGS
-        let nbDomainsToCheck: any;
-        exec('wc -l /tmp/' + filePath, function (error: any, results: any) {
-            nbDomainsToCheck = results;
-        });
+        let fileInfos: FileInfos = await this.fileService.getFileInfos(filePath, DomainZone.FR);
 
-        const fileStream = fs.createReadStream(filePath);
-        const rl = readline.createInterface({
-            input: fileStream,
-            crlfDelay: Infinity
-        });
+        if (fileInfos != null) {
+            const fileStream = fs.createReadStream(filePath);
+            const rl = readline.createInterface({
+                input: fileStream,
+                crlfDelay: Infinity
+            });
 
-        for await (const line of rl) {
-            // check domain spelling
-            // check line don't start with * or #
-            if (!(line.startsWith("*") | line.startsWith("#"))) {
-                this.LOG_COUNTER_DOMAIN_CHECKED++;
+            let parsedCount = 0;
+            for await (const line of rl) {
+                // check line don't start with * or #
+                if (parsedCount > fileInfos.parsedCount && !(line.startsWith("*") | line.startsWith("#"))) {
+                    if (parsedCount % 100 === 0) {
+                        // update db every 100lines parsed
+                        this.fileService.updateParsedCount(parsedCount, filePath);
+                    }
+                    // check domain spelling
+                    let domain = this._getFormattedDomainName(line);
 
-                let domain = this._getFormattedDomainName(line);
+                    if (domain && domain !== null) {
+                        await this._isShopifyDomain(page, domain)
+                            .then((isShopify: boolean) => {
+                                if (domain && domain !== null) {
+                                    console.log("[LOG] ", domain.domainName + " => isShopify : " + isShopify);
+                                    if (isShopify) {
+                                        this.LOG_COUNTER_SHOPIFY_FOUND++;
+                                        domain.lastTimeCheckedDate = moment().format("YYYY-MM-DD");
+                                        domain.isShopify = isShopify;
 
-                if (domain && domain !== null) {
-                    await this._isShopifyDomain(page, domain)
-                        .then((isShopify: boolean) => {
-                            if (domain && domain !== null) {
-                                console.log("[LOG] ", domain.domainName + " => isShopify : " + isShopify);
-                                if (isShopify) {
-                                    this.LOG_COUNTER_SHOPIFY_FOUND++;
-                                    domain.lastTimeCheckedDate = moment().format("YYYY-MM-DD");
-                                    domain.isShopify = isShopify;
-
-                                    return this.domainsService.insertDomain(domain)
+                                        return this.domainsService.insertDomain(domain)
+                                    }
                                 }
-                            }
-                        })
-                        .then(() => {
-                            console.log("[LOG] ", "[" + this.LOG_DATE_DOMAINS_CHECKED + "]: " + this.LOG_COUNTER_DOMAIN_CHECKED + " domains checked of" + nbDomainsToCheck + " >>>  " + this.LOG_COUNTER_SHOPIFY_FOUND + " shopify found");
-                        });
+                            })
+                            .then(() => {
+                                console.log("[LOG] ", "[" + fileInfos.zone + "]" + "[" + fileInfos.filePath + "]: " + parsedCount + " domains checked of " + fileInfos.linesCount + " >>>  " + this.LOG_COUNTER_SHOPIFY_FOUND + " shopify found");
+                            });
+                    }
+
                 }
-
+                parsedCount++;
             }
-
         }
 
         browser.close();
@@ -162,7 +171,7 @@ export class AfnicDomainRetrieverService {
     }
 
     private prepareUrl() {
-        let yesterdayDate = moment().subtract(2, 'days');
+        let yesterdayDate = moment().subtract(1, 'days');
         let formattedDate = moment(yesterdayDate).format("YYYYMMDD").toString();
         this.downloadedFileNameGifExtension = formattedDate + this.DOMAINS_LIST_DOWNLOAD_URL_SECOND_PART + this.DOWNLOADED_FILE_EXTENSION;
         this.downloadedFileNameNoExtension = formattedDate + this.DOMAINS_LIST_DOWNLOAD_URL_SECOND_PART;

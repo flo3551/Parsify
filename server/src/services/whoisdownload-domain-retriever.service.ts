@@ -1,10 +1,10 @@
+import { FileInfos } from "src/models/file-infos.model";
 import { Domain, DomainZone } from "../models/domain.model";
 import { DomainsService } from "./domains.service";
 import { FacebookPageService } from "./facebook-page.service";
+import { FileService } from "./file.service";
 var exec = require('child_process').exec;
-
 const puppeteer = require('puppeteer');
-
 let http = require('http');
 let fs = require('fs');
 let moment = require('moment');
@@ -14,6 +14,7 @@ let readline = require('readline');
 export class WhoIsDownloadDomainRetrieverService {
     private domainsService: DomainsService;
     private facebookPageService: FacebookPageService;
+    private fileService: FileService;
 
     private readonly DOMAINS_LIST_DOWNLOAD_URL_FIRST_PART = "http://www.whoisdownload.com/download-panel/free-download-file/";
     private readonly DOMAINS_LIST_DOWNLOAD_URL_SECOND_PART = "/nrd/home";
@@ -27,7 +28,7 @@ export class WhoIsDownloadDomainRetrieverService {
     // LOGS
     private LOG_COUNTER_DOMAIN_CHECKED = 0;
     private LOG_COUNTER_SHOPIFY_FOUND = 0;
-    private LOG_DATE_DOMAINS_CHECKED = null;
+    public LOG_DATE_DOMAINS_CHECKED = null;
 
     public downloadedFileName: string = '';
     public dateRegistrationDomain: any;
@@ -36,6 +37,7 @@ export class WhoIsDownloadDomainRetrieverService {
     constructor() {
         this.domainsService = new DomainsService();
         this.facebookPageService = new FacebookPageService();
+        this.fileService = new FileService();
     }
 
     public downloadYesterdayRegisteredDomains() {
@@ -73,52 +75,61 @@ export class WhoIsDownloadDomainRetrieverService {
         fs.unlink(this.DOWNLOADED_FILE_OUTPUT_DIR + this.downloadedFileName, () => { });
     }
 
-    private async readTxtFile(filePath: string) {
+    public async readTxtFile(filePath: string) {
         let browser = await puppeteer.launch({
             headless: true,
             args: ['--no-sandbox']
         });
         let page = await browser.newPage();
+        let fileInfos: FileInfos = await this.fileService.getFileInfos(filePath, DomainZone.INTER);
 
-        // LOGS
-        let nbDomainsToCheck: any;
-        exec('wc -l /tmp/' + filePath, function (error: any, results: any) {
-            nbDomainsToCheck = results;
-        });
+        if (fileInfos != null) {
+            const fileStream = fs.createReadStream(filePath);
+            const rl = readline.createInterface({
+                input: fileStream,
+                crlfDelay: Infinity
+            });
 
-        const fileStream = fs.createReadStream(filePath);
-        const rl = readline.createInterface({
-            input: fileStream,
-            crlfDelay: Infinity
-        });
-
-        for await (const line of rl) {
-            this.LOG_COUNTER_DOMAIN_CHECKED++;
-            let domain = new Domain(line, this.dateRegistrationDomain, '', false, 0, DomainZone.INTER);
-
-            await this._isShopifyDomain(page, domain)
-                .then((isShopify: boolean) => {
-                    console.log("[LOG] ", domain.domainName + " => isShopify : " + isShopify);
-                    if (isShopify) {
-                        this.LOG_COUNTER_SHOPIFY_FOUND++;
-                        domain.lastTimeCheckedDate = moment().format("YYYY-MM-DD");
-                        domain.isShopify = isShopify;
-
-                        return this.domainsService.insertDomain(domain)
+            let parsedCount = fileInfos.parsedCount;
+            for await (const line of rl) {
+                if (parsedCount > fileInfos.parsedCount) {
+                    if (parsedCount % 100 === 0) {
+                        // update db every 100lines parsed
+                        this.fileService.updateParsedCount(parsedCount, filePath);
                     }
-                })
-                .then(() => {
-                    if (domain.isShopify && domain.domainName) {
-                        this.facebookPageService.searchPage(domain.domainName);
-                    }
-                    console.log("[LOG] ", "[" + this.LOG_DATE_DOMAINS_CHECKED + "]: " + this.LOG_COUNTER_DOMAIN_CHECKED + " domains checked of" + nbDomainsToCheck + " >>>  " + this.LOG_COUNTER_SHOPIFY_FOUND + " shopify found");
-                });
+                    let domain = new Domain(line, this.dateRegistrationDomain, '', false, 0, DomainZone.INTER);
+
+                    await this._isShopifyDomain(page, domain)
+                        .then((isShopify: boolean) => {
+                            console.log("[LOG] ", domain.domainName + " => isShopify : " + isShopify);
+                            if (isShopify) {
+                                this.LOG_COUNTER_SHOPIFY_FOUND++;
+                                domain.lastTimeCheckedDate = moment().format("YYYY-MM-DD");
+                                domain.isShopify = isShopify;
+
+                                return this.domainsService.insertDomain(domain)
+                            }
+                        })
+                        .then(() => {
+                            if (domain.isShopify && domain.domainName) {
+                                this.facebookPageService.searchPage(domain.domainName);
+                            }
+                            console.log("[LOG] ", "[" + fileInfos.zone + "]" + "[" + fileInfos.filePath + "]: " + parsedCount + " domains checked of " + fileInfos.linesCount + " >>>  " + this.LOG_COUNTER_SHOPIFY_FOUND + " shopify found");
+                        });
+                }
+                parsedCount++;
+            }
+
+            this.fileService.updateParsedCount(parsedCount, filePath);
+
+            browser.close();
+            fs.unlink(filePath, () => {
+                console.log("done");
+            })
+        } else {
+            console.log("File infos not found for ", filePath);
         }
 
-        browser.close();
-        fs.unlink(filePath, () => {
-            console.log("done");
-        })
     }
 
     private _isShopifyDomain(page: any, domain: Domain) {

@@ -121,10 +121,13 @@ export class AfnicDomainRetrieverService {
                 }
                 parsedCount++;
             }
+            this.fileService.updateParsedCount(parsedCount, filePath);
+            fs.unlinkSync(filePath);
+        } else {
+            console.log("File infos not found for ", filePath);
         }
 
         browser.close();
-        fs.unlinkSync(filePath);
     }
 
     private _isShopifyDomain(page: any, domain: Domain) {

@@ -122,14 +122,13 @@ export class WhoIsDownloadDomainRetrieverService {
 
             this.fileService.updateParsedCount(parsedCount, filePath);
 
-            browser.close();
             fs.unlink(filePath, () => {
                 console.log("done");
             })
         } else {
             console.log("File infos not found for ", filePath);
         }
-
+        browser.close();
     }
 
     private _isShopifyDomain(page: any, domain: Domain) {

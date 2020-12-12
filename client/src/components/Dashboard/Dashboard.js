@@ -10,7 +10,7 @@ export class Dashboard extends React.Component {
     }
 
     onChangeSelectedDomain = (domain) => {
-        this.setState({selectedDomain: domain});
+        this.setState({ selectedDomain: domain });
     }
 
     render() {
@@ -18,13 +18,13 @@ export class Dashboard extends React.Component {
             <>
                 <CustomNavbar />
                 <div className="Dashboard">
-                    <h1 style={{marginTop: "25px", marginBottom: "50px"}}>Dashboard</h1>
+                    <h1 style={{ marginTop: "25px", marginBottom: "50px" }}>Dashboard</h1>
                     <Row className="justify-content-md-center" >
                         <Col md={5}>
-                            <DomainsList onSelectedDomainChange={this.onChangeSelectedDomain}/>
+                            <DomainsList onSelectedDomainChange={this.onChangeSelectedDomain} />
                         </Col>
                         <Col md={6}>
-                            <DomainDetails domain={this.state.selectedDomain}/>
+                            <DomainDetails domain={this.state.selectedDomain} />
                         </Col>
                     </Row>
                 </div>

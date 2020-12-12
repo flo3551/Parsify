@@ -11,11 +11,15 @@ export class DomainsList extends React.Component {
         domainsCount: 0,
         selectedDomain: null,
         currentPage: 1,
-        resultsDisplayPerPage: 20
+        resultsDisplayPerPage: 20,
+        keywordFilter: null,
+        exactDateFilter: null,
+        minDateFilter: null,
+        maxDateFilter: null,
     }
 
     componentDidMount() {
-        this._updateDomains();
+        this._updateDomains(true);
     }
 
     onClickDomainRow = (domain) => {
@@ -24,21 +28,21 @@ export class DomainsList extends React.Component {
     }
 
     onChangePage = (newPage) => {
-        this.setState({ currentPage: newPage }, this._updateDomains);
+        this.setState({ currentPage: newPage }, () => { this._updateDomains(false) });
     }
 
     onSearchNewDomains = (event) => {
         this.setState({ domains: event.domainsList, domainsCount: event.domainsCount, currentPage: 1 })
     }
 
-    _updateDomains = () => {
-        API.getDomainsForPage(this.state.currentPage, this.state.resultsDisplayPerPage)
+    _updateDomains = (goToFirstPage) => {
+        API.getDomainsForPageAndFilters(this.state.currentPage, this.state.resultsDisplayPerPage, this.state.keywordFilter, this.state.zoneFilter, this.state.exactDateFilter, this.state.minDateFilter, this.state.maxDateFilter)
             .then(response => {
                 this.setState({ domains: response.data.domainsList });
-                return API.getCountDomains()
+                return API.getCountDomains(this.state.keywordFilter, this.state.zoneFilter, this.state.exactDateFilter, this.state.minDateFilter, this.state.maxDateFilter)
             })
             .then(response => {
-                this.setState({ domainsCount: response.data.domainsCount });
+                this.setState({ domainsCount: response.data.domainsCount, currentPage: goToFirstPage ? 1 : this.state.currentPage });
             })
     }
 
@@ -47,15 +51,32 @@ export class DomainsList extends React.Component {
     }
 
     onChangeNbResultsPerPage = (nbResults) => {
-        this.setState({ resultsDisplayPerPage: nbResults }, this._updateDomains)
+        this.setState({ resultsDisplayPerPage: nbResults }, () => { this._updateDomains(true) })
+    }
+
+    onFiltersChange = (filters) => {
+        this.setState({
+            keywordFilter: filters.keywordInput,
+            exactDateFilter: filters.exactDate,
+            minDateFilter: filters.minDate,
+            maxDateFilter: filters.maxDate,
+            zoneFilter: filters.zone
+        }, () => { this._updateDomains(true) });
     }
 
     render() {
         return (
             <div>
                 <Row className="justify-content-center">
-                    <SearchFilter onDomainsSearch={this.onSearchNewDomains} onChangeNbResultsPerPage={this.onChangeNbResultsPerPage} />
+                    <SearchFilter onFilterChange={this.onFiltersChange} onDomainsSearch={this.onSearchNewDomains} onChangeNbResultsPerPage={this.onChangeNbResultsPerPage} />
                     <Table striped bordered hover>
+                        <thead>
+                            <tr>
+                                <th>
+                                    {this.state.domainsCount} résultat(s)
+                                </th>
+                            </tr>
+                        </thead>
                         <tbody>
                             {this.state.domains.map((domain, index) => (
                                 <tr key={index} className={this.isSelectedDomain(domain) ? "bg-secondary text-light" : ""}>

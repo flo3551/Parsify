@@ -1,7 +1,7 @@
 import React from "react";
-import API from "../../utils/API";
-import { Button, FormGroup, FormControl, FormLabel, Form, Image } from "react-bootstrap";
+import { Button, Form, FormControl, FormGroup, FormLabel, Image } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import API from "../../utils/API";
 import { CustomNavbar } from "../CustomNavbar/CustomNavbar";
 
 export class Login extends React.Component {
@@ -10,7 +10,7 @@ export class Login extends React.Component {
         password: "",
     }
 
-    send = async () => {
+    send = () => {
         const { email, password } = this.state;
         if (!email || email.length === 0) {
             // handle form validation
@@ -56,7 +56,7 @@ export class Login extends React.Component {
                             <FormControl value={password} onChange={this.handleChange} type="password" />
                         </FormGroup>
 
-                        <Button onClick={this.send} block bssize="large" type="submit">
+                        <Button onClick={this.send} block bssize="large">
                             Connexion
                         </Button>
                     </Form>

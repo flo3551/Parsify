@@ -21,8 +21,6 @@ export class App {
             let whoIsDownload_domainRetrieverService = new WhoIsDownloadDomainRetrieverService();
             whoIsDownload_domainRetrieverService.downloadYesterdayRegisteredDomains();
         });
-        // let ocrHelper = new OCRHelper();
-        // ocrHelper.saveTextFromImages([], "/tmp/20201208_CREA_fr.txt");
 
         this.restartParsingInProgress();
     }
@@ -40,7 +38,6 @@ export class App {
                     if (file.zone === DomainZone.FR) {
                         let afnic_domainRetrieverService = new AfnicDomainRetrieverService();
                         afnic_domainRetrieverService.readTxtFile(file.filePath);
-                        afnic_domainRetrieverService
                     } else if (file.zone === DomainZone.INTER) {
                         let whoIsDownload_domainRetrieverService = new WhoIsDownloadDomainRetrieverService();
                         whoIsDownload_domainRetrieverService.readTxtFile(file.filePath);

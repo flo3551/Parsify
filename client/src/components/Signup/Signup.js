@@ -11,7 +11,7 @@ export class Signup extends React.Component {
         confirmPassword: ""
     };
 
-    send = async () => {
+    send = () => {
         const { email, password, confirmPassword } = this.state;
         if (!email || email.length === 0) {
             // TODO: handle form validation
@@ -59,7 +59,7 @@ export class Signup extends React.Component {
                             <FormLabel>Confirmation du mot de passe</FormLabel>
                             <FormControl type="password" value={confirmPassword} onChange={this.handleChange} />
                         </FormGroup>
-                        <Button onClick={this.send} block bssize="large" type="submit">
+                        <Button onClick={this.send} block bssize="large">
                             Inscription
                         </Button>
                     </Form>

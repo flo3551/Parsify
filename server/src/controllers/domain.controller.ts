@@ -9,27 +9,18 @@ export class DomainController {
         this.domainsService = new DomainsService();
     }
 
-    // public async getDomainsList(req: any, res: any) {
-    //     this.domainsService.selectDomainsList()
-    //         .then((domains: Domain[]) => {
-    //             return res.status(200).json({
-    //                 domainsList: domains
-    //             });
-    //         })
-    //         .catch((error: any) => {
-    //             res.status(500).json(
-    //                 { error: "Erreur lors de la récupération des stores" }
-    //             )
-    //         })
-    // }
-
-    public async getDomainsForPage(req: any, res: any) {
+    public async getDomainsForPageAndFilters(req: any, res: any) {
         let page = parseInt(req.query.page);
         let nbResultsPerPage = parseInt(req.query.nbResultsPerPage);
         let offset = (nbResultsPerPage * page) - nbResultsPerPage;
+        let exactDate = req.query.exactDate ? new Date(req.query.exactDate) : undefined;
+        let minDate = req.query.minDate ? new Date(req.query.minDate) : undefined;
+        let maxDate = req.query.maxDate ? new Date(req.query.maxDate) : undefined;
+        let keyword = req.query.keyword ? encodeURIComponent(req.query.keyword.trim()) : undefined;
+        let zone = (req.query.zone && req.query.zone !== "-1") ? encodeURIComponent(req.query.zone.trim()) : undefined;
 
-        this.domainsService.selectRangeDomains(offset, nbResultsPerPage)
-            .then((domains: Domain[]) => {
+        this.domainsService.selectRangeDomainsWithFilters(offset, nbResultsPerPage, keyword, zone, exactDate, minDate, maxDate)
+            .then((domains: any) => {
                 return res.status(200).json({
                     domainsList: domains
                 });
@@ -42,53 +33,13 @@ export class DomainController {
     }
 
     public async getDomainsCount(req: any, res: any) {
-        this.domainsService.countDomains()
-            .then((nbDomains: any) => {
-                return res.status(200).json({
-                    domainsCount: nbDomains
-                });
-            })
-            .catch((error: any) => {
-                return res.status(500).json(
-                    { error: "Erreur lors de la récupération des stores" }
-                )
-            })
-    }
+        let exactDate = req.query.exactDate ? new Date(req.query.exactDate) : undefined;
+        let minDate = req.query.minDate ? new Date(req.query.minDate) : undefined;
+        let maxDate = req.query.maxDate ? new Date(req.query.maxDate) : undefined;
+        let keyword = req.query.keyword ? encodeURIComponent(req.query.keyword.trim()) : undefined;
+        let zone = (req.query.zone && req.query.zone !== "-1") ? encodeURIComponent(req.query.zone.trim()) : undefined;
 
-
-    public async getFilteredDomains(req: any, res: any) {
-        try {
-            let nbResultsPerPage = parseInt(req.query.nbResultsPerPage);
-
-            let exactDate = req.query.exactDate ? new Date(req.query.exactDate) : undefined;
-            let minDate = req.query.minDate ? new Date(req.query.minDate) : undefined;
-            let maxDate = req.query.maxDate ? new Date(req.query.maxDate) : undefined;
-            let keyword = req.query.keyword ? encodeURIComponent(req.query.keyword.trim()) : undefined;
-            let zone = req.query.zone ? encodeURIComponent(req.query.zone.trim()) : undefined;
-
-            this.domainsService.selectFilteredDomains(nbResultsPerPage, exactDate, minDate, maxDate, keyword, zone)
-                .then((domains: Domain[]) => {
-                    return res.status(200).json({
-                        domainsList: domains
-                    });
-                })
-                .catch((error: any) => {
-                    res.status(500).json(
-                        { error: "Erreur lors de la récupération des stores" }
-                    )
-                })
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    public async getCountFilteredDomains(req: any, res: any) {
-        let exactDate = new Date(req.query.exactDate);
-        let minDate = new Date(req.query.minDate);
-        let maxDate = new Date(req.query.maxDate);
-        let keyword = req.query.keyword;
-
-        this.domainsService.countFilteredDomains(exactDate, minDate, maxDate, keyword)
+        this.domainsService.countDomainsWithFilters(keyword, zone, exactDate, minDate, maxDate)
             .then((nbDomains: any) => {
                 return res.status(200).json({
                     domainsCount: nbDomains

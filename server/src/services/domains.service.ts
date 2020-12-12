@@ -10,43 +10,40 @@ export class DomainsService {
 
     private readonly INSERT_DOMAIN_SQL = "INSERT INTO domains(domainName, dateRegistration, lastTimeCheckedDate, isShopify, numberChecked, zone) VALUES (?, ?, ?, ?, ?, ?)"
     private readonly UPDATE_DOMAIN_SQL = "UPDATE domains SET domainName=?, lastTimeCheckedDate=?, isShopify=?, numberChecked=?, zone=? WHERE domainName=?";
-    private readonly SELECT_DOMAINS_RANGE_SQL = "SELECT * from domains WHERE isShopify=1 LIMIT ? OFFSET ?"
+    private readonly SELECT_DOMAINS_RANGE_SQL = "SELECT * from domains WHERE isShopify=1 "
     private readonly SELECT_COUNT_DOMAIN_SQL = "SELECT COUNT(domainName) as nbDomains from domains WHERE isShopify=1"
-    private readonly SELECT_COUNT_DAILY_DOMAIN_TO_CHECK_SQL = "SELECT COUNT(domainName) as nbDomains from domains WHERE dateRegistration=? and isShopify=1"
     private readonly CLAUSE_SELECT_DOMAINS = "SELECT * from domains ";
-    private readonly CLAUSE_LITMIT_OFFSET = " LIMIT ?";
+    private readonly CLAUSE_LIMIT_OFFSET = " LIMIT ? OFFSET ? ";
     private readonly CLAUSE_SELECT_COUNT_DOMAINS = "SELECT count(domainName) from domains ";
 
     constructor() {
         this.db = new MysqlHelper();
     }
 
-    public countDomains(): any {
+    public countDomainsWithFilters(keyword?: string, zone?: string, exactDate?: Date, minDate?: Date, maxDate?: Date): any {
         return new Promise((resolve, reject) => {
-            this.db.query(this.SELECT_COUNT_DOMAIN_SQL, [], resolve, reject);
+            console.log(this.SELECT_COUNT_DOMAIN_SQL + this._buildWhereClause(exactDate, minDate, maxDate, keyword, zone));
+            this.db.query(this.SELECT_COUNT_DOMAIN_SQL + this._buildWhereClause(exactDate, minDate, maxDate, keyword, zone), [], resolve, reject);
         })
             .then((results: any) => {
+                console.log(results[0]);
+
                 return Promise.resolve(results[0].nbDomains);
             })
     }
 
-    public selectRangeDomains(offset: number, limit: number) {
+    public selectRangeDomainsWithFilters(offset: number, limit: number, keyword?: string, zone?: string, exactDate?: Date, minDate?: Date, maxDate?: Date) {
         return new Promise((resolve, reject) => {
-            this.db.query(this.SELECT_DOMAINS_RANGE_SQL, [limit, offset], resolve, reject);
+            this.db.query(this.SELECT_DOMAINS_RANGE_SQL + this._buildWhereClause(exactDate, minDate, maxDate, keyword, zone) + this.CLAUSE_LIMIT_OFFSET, [limit, offset], resolve, reject);
         })
             .then((results: any) => {
                 return Promise.resolve(this._mapResultsToDomains(results));
             })
+            .catch(error => {
+                console.log(error);
+                return Promise.reject(error);
+            })
     }
-
-    // public selectDomainsList(): Promise<Domain[]> {
-    //     return new Promise((resolve, reject) => {
-    //         this.db.query(this.SELECT_DOMAINS_LIST, [], resolve);
-    //     })
-    //         .then((results: any) => {
-    //             return Promise.resolve(this._mapResultsToDomains(results));
-    //         })
-    // }
 
     public insertDomain(domain: Domain) {
         return new Promise((resolve, reject) => {
@@ -55,42 +52,6 @@ export class DomainsService {
             .then((results: any) => {
                 return Promise.resolve();
             })
-    }
-
-    public countFilteredDomains(exactDate?: Date, minDate?: Date, maxDate?: Date, keyword?: string): any {
-        return new Promise((resolve, reject) => {
-            this.db.query(this.CLAUSE_SELECT_COUNT_DOMAINS + this._buildWhereClause(exactDate, minDate, maxDate, keyword), [], resolve, reject);
-        })
-            .then((results: any) => {
-                return Promise.resolve(results[0].nbDomains);
-            })
-    }
-
-    public selectFilteredDomains(limit: number, exactDate?: Date, minDate?: Date, maxDate?: Date, keyword?: string, zone?: string) {
-        return new Promise((resolve, reject) => {
-            this.db.query(this.CLAUSE_SELECT_DOMAINS + this._buildWhereClause(exactDate, minDate, maxDate, keyword, zone) + this.CLAUSE_LITMIT_OFFSET, [limit], resolve, reject);
-        })
-            .then((results: any) => {
-                let domains = this._mapResultsToDomains(results);
-
-                return Promise.resolve(domains);
-            })
-            .catch((error: any) => {
-                console.log(error);
-                return [];
-            })
-    }
-
-    public queuingUpdateDomain() {
-        if (!this.hasQueuingUpdateStarted) {
-            this.hasQueuingUpdateStarted = true;
-            while (this.queuedDomainUpdate.length > 0) {
-                let domain: Domain = this.queuedDomainUpdate[0];
-                this.db.query(this.UPDATE_DOMAIN_SQL, [domain.domainName, moment(domain.lastTimeCheckedDate).format('YYYY-MM-DD').toString(), domain.isShopify, domain.numberChecked, domain.zone, domain.domainName]);
-                this.queuedDomainUpdate.splice(0, 1);
-            }
-            this.hasQueuingUpdateStarted = false;
-        }
     }
 
     private _mapResultsToDomains(results: any[]) {
@@ -107,7 +68,7 @@ export class DomainsService {
     }
 
     private _buildWhereClause(exactDate?: Date, minDate?: Date, maxDate?: Date, keyword?: string, zone?: string) {
-        let whereClause = "WHERE 1=1";
+        let whereClause = "";
         if (exactDate) {
             whereClause += " AND dateRegistration = '" + moment(exactDate).format('YYYY-MM-DD').toString() + "'";
         } else {

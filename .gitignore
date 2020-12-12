@@ -2,3 +2,5 @@ server/node_modules/
 .vscode/
 server/build/
 node_modules
+server/package-lock.json
+client/package-lock.json

@@ -22,19 +22,21 @@ export class CustomNavbar extends React.Component {
 
     disconnect = () => {
         API.logout();
-        this.setState({ token: null });
+        this.setState({ token: null }, () => {
+            window.location = "/login"
+        });
     };
 
     render() {
         let AuthenticationButton;
         if (this.isLoggedIn()) {
-            AuthenticationButton = <Button onClick={this.disconnect} size="sm" style={{ float: "right" }} type="submit">Se déconnecter</Button>
+            AuthenticationButton = <Button onClick={this.disconnect} size="sm" style={{ float: "right", backgroundColor: "#7086EB" }}>Se déconnecter</Button>
         } else {
-            AuthenticationButton = <Button onClick={this.onClickLoginButton} size="sm" style={{ float: "right" }}>Connexion</Button>
+            AuthenticationButton = <Button onClick={this.onClickLoginButton} size="sm" style={{ float: "right", backgroundColor: "#7086EB"}}>Connexion</Button>
         }
         return (
             <>
-                <Navbar bg="dark" variant="dark">
+                <Navbar style={{backgroundColor: "#10053E"}}>
                     <Col md={3}>
                         <Navbar.Brand href="/">
                             <img

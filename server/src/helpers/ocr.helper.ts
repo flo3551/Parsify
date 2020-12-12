@@ -10,25 +10,11 @@ export class OCRHelper {
 
     public async saveTextFromImages(filePaths: string[], outputFile: string) {
         console.log(outputFile);
-        filePaths = [
-            '/tmp/part1_20201208_CREA_fr.png',
-            '/tmp/part2_20201208_CREA_fr.png',
-            '/tmp/part3_20201208_CREA_fr.png'
-        ]
+
         let promisesStack = [];
-        // console.log("filePaths : ", filePaths);
 
         for (let path of filePaths) {
             promisesStack.push(this.createCallOcrApi(path, outputFile));
-            // this.callOcrApi(path, outputFile)
-            //     .then(() => {
-            //         for (let path of filePaths) {
-            //             fs.unlinkSync(path);
-            //         }
-            //     })
-            //     .catch(error => {
-            //         console.log(error);
-            //     })
         }
 
         return this._executeQueuingPromises(promisesStack)
@@ -39,15 +25,6 @@ export class OCRHelper {
             .catch((error: any) => {
                 console.log(error);
             })
-        // return Promise.all(promisesStack)
-        //     .then(() => {
-        //         for (let path of filePaths) {
-        //             fs.unlinkSync(path);
-        //         }
-        //     })
-        //     .catch(error => {
-        //         console.log(error);
-        //     })
     }
 
     private _executeQueuingPromises(promiseStack: any[]) {
@@ -93,10 +70,7 @@ export class OCRHelper {
                             return Promise.reject(response.data);
                         }
                         let textData = response.data.ParsedResults[0].ParsedText;
-                        console.log("before write file ");
-
                         fs.writeFileSync(outputFile, textData, { flag: 'as' });
-                        console.log("after write file ");
 
                         resolve();
                     })

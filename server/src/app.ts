@@ -22,7 +22,7 @@ export class App {
             whoIsDownload_domainRetrieverService.downloadYesterdayRegisteredDomains();
         });
 
-        this.restartParsingInProgress();
+        // this.restartParsingInProgress();
     }
 
     private restartParsingInProgress() {

@@ -14,5 +14,8 @@ export class DomainsRoute {
         this.app.get('/getDomainsForPage', this.domainController.getDomainsForPageAndFilters.bind(this.domainController));
         this.app.get('/getDomainsCount', this.domainController.getDomainsCount.bind(this.domainController));
         this.app.get('/getDomainsScreenshot', this.domainController.getDomainsScreenshot.bind(this.domainController));
+        this.app.get('/isDomainFavorited', this.domainController.isDomainFavorited.bind(this.domainController));
+        this.app.post('/addFavoriteDomain', this.domainController.addFavoriteDomain.bind(this.domainController));
+        this.app.post('/deleteFavoriteDomain', this.domainController.deleteFavoriteDomain.bind(this.domainController));
     }
 }

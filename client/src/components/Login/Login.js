@@ -24,6 +24,7 @@ export class Login extends React.Component {
         return API.login(email, password)
             .then(response => {
                 localStorage.setItem("token", response.data.token);
+                localStorage.setItem("emailLogin", email);
                 window.location = "/dashboard";
             })
             .catch(error => {

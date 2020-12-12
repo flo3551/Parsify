@@ -16,6 +16,7 @@ export class DomainsList extends React.Component {
         exactDateFilter: null,
         minDateFilter: null,
         maxDateFilter: null,
+        isFavoriteDomains: false
     }
 
     componentDidMount() {
@@ -36,10 +37,11 @@ export class DomainsList extends React.Component {
     }
 
     _updateDomains = (goToFirstPage) => {
-        API.getDomainsForPageAndFilters(this.state.currentPage, this.state.resultsDisplayPerPage, this.state.keywordFilter, this.state.zoneFilter, this.state.exactDateFilter, this.state.minDateFilter, this.state.maxDateFilter)
+        let login = localStorage.getItem("emailLogin");
+        API.getDomainsForPageAndFilters(this.state.currentPage, this.state.resultsDisplayPerPage, this.state.keywordFilter, this.state.zoneFilter, this.state.exactDateFilter, this.state.minDateFilter, this.state.maxDateFilter, this.state.isFavoriteDomains, login)
             .then(response => {
                 this.setState({ domains: response.data.domainsList });
-                return API.getCountDomains(this.state.keywordFilter, this.state.zoneFilter, this.state.exactDateFilter, this.state.minDateFilter, this.state.maxDateFilter)
+                return API.getCountDomains(this.state.keywordFilter, this.state.zoneFilter, this.state.exactDateFilter, this.state.minDateFilter, this.state.maxDateFilter, this.state.isFavoriteDomains, login)
             })
             .then(response => {
                 this.setState({ domainsCount: response.data.domainsCount, currentPage: goToFirstPage ? 1 : this.state.currentPage });
@@ -60,7 +62,8 @@ export class DomainsList extends React.Component {
             exactDateFilter: filters.exactDate,
             minDateFilter: filters.minDate,
             maxDateFilter: filters.maxDate,
-            zoneFilter: filters.zone
+            zoneFilter: filters.zone,
+            isFavoriteDomains: filters.isFavoriteDomains
         }, () => { this._updateDomains(true) });
     }
 
@@ -68,7 +71,7 @@ export class DomainsList extends React.Component {
         return (
             <div>
                 <Row className="justify-content-center">
-                    <SearchFilter onFilterChange={this.onFiltersChange} onDomainsSearch={this.onSearchNewDomains} onChangeNbResultsPerPage={this.onChangeNbResultsPerPage} />
+                    <SearchFilter onFilterChange={this.onFiltersChange} onFavoriteChange={this.onFavoriteChange} onDomainsSearch={this.onSearchNewDomains} onChangeNbResultsPerPage={this.onChangeNbResultsPerPage} />
                     <Table striped bordered hover>
                         <thead>
                             <tr>

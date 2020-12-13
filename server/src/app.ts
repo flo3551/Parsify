@@ -22,12 +22,12 @@ export class App {
             whoIsDownload_domainRetrieverService.downloadYesterdayRegisteredDomains();
         });
 
-        // this.restartParsingInProgress();
+        this.restartParsingInProgress();
     }
 
     private restartParsingInProgress() {
         this.fileService.getFilesInProgress()
-            .then((filesInfos: FileInfos[]) => {
+            .then(async (filesInfos: FileInfos[]) => {
                 let listFileInProgress = filesInfos;
                 console.log(listFileInProgress.length + " files recovered");
 
@@ -37,10 +37,10 @@ export class App {
                     }
                     if (file.zone === DomainZone.FR) {
                         let afnic_domainRetrieverService = new AfnicDomainRetrieverService();
-                        afnic_domainRetrieverService.readTxtFile(file.filePath);
+                        await afnic_domainRetrieverService.readTxtFile(file.filePath);
                     } else if (file.zone === DomainZone.INTER) {
                         let whoIsDownload_domainRetrieverService = new WhoIsDownloadDomainRetrieverService();
-                        whoIsDownload_domainRetrieverService.readTxtFile(file.filePath);
+                        await whoIsDownload_domainRetrieverService.readTxtFile(file.filePath);
                     }
                 }
             })

@@ -88,10 +88,11 @@ export class AfnicDomainRetrieverService {
                 crlfDelay: Infinity
             });
 
-            let parsedCount = 0;
+            let parsedCount = fileInfos.parsedCount;
+            let lineIndex = 0;
             for await (const line of rl) {
                 // check line don't start with * or #
-                if (parsedCount > fileInfos.parsedCount && !(line.startsWith("*") | line.startsWith("#"))) {
+                if (lineIndex > parsedCount && !(line.startsWith("*") | line.startsWith("#"))) {
                     if (parsedCount % 100 === 0) {
                         // update db every 100lines parsed
                         this.fileService.updateParsedCount(parsedCount, filePath);
@@ -114,14 +115,14 @@ export class AfnicDomainRetrieverService {
                                 }
                             })
                             .then(() => {
-                                console.log("[LOG] ", "[" + fileInfos.zone + "]" + "[" + fileInfos.filePath + "]: " + parsedCount + " domains checked of " + fileInfos.linesCount + " >>>  " + this.LOG_COUNTER_SHOPIFY_FOUND + " shopify found");
+                                console.log("[LOG] ", "[" + fileInfos.zone + "]" + "[" + fileInfos.filePath + "]: " + lineIndex + " domains checked of " + fileInfos.linesCount + " >>>  " + this.LOG_COUNTER_SHOPIFY_FOUND + " shopify found");
                             });
                     }
 
                 }
-                parsedCount++;
+                lineIndex++;
             }
-            this.fileService.updateParsedCount(parsedCount, filePath);
+            this.fileService.updateParsedCount(lineIndex, filePath);
             fs.unlinkSync(filePath);
         } else {
             console.log("File infos not found for ", filePath);

@@ -90,12 +90,13 @@ export class WhoIsDownloadDomainRetrieverService {
                 crlfDelay: Infinity
             });
 
-            let parsedCount = fileInfos.parsedCount;
+            let parsedCount = fileInfos.parsedCount; // 75 000
+            let lineIndex = 0
             for await (const line of rl) {
-                if (parsedCount > fileInfos.parsedCount) {
-                    if (parsedCount % 100 === 0) {
+                if (lineIndex > parsedCount) {
+                    if (lineIndex % 100 === 0) {
                         // update db every 100lines parsed
-                        this.fileService.updateParsedCount(parsedCount, filePath);
+                        this.fileService.updateParsedCount(lineIndex, filePath);
                     }
                     let domain = new Domain(line, this.dateRegistrationDomain, '', false, 0, DomainZone.INTER);
 
@@ -114,13 +115,13 @@ export class WhoIsDownloadDomainRetrieverService {
                             if (domain.isShopify && domain.domainName) {
                                 this.facebookPageService.searchPage(domain.domainName);
                             }
-                            console.log("[LOG] ", "[" + fileInfos.zone + "]" + "[" + fileInfos.filePath + "]: " + parsedCount + " domains checked of " + fileInfos.linesCount + " >>>  " + this.LOG_COUNTER_SHOPIFY_FOUND + " shopify found");
+                            console.log("[LOG] ", "[" + fileInfos.zone + "]" + "[" + fileInfos.filePath + "]: " + lineIndex + " domains checked of " + fileInfos.linesCount + " >>>  " + this.LOG_COUNTER_SHOPIFY_FOUND + " shopify found");
                         });
                 }
-                parsedCount++;
+                lineIndex++;
             }
 
-            this.fileService.updateParsedCount(parsedCount, filePath);
+            this.fileService.updateParsedCount(lineIndex, filePath);
 
             fs.unlink(filePath, () => {
                 console.log("done");

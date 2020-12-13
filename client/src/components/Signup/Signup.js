@@ -45,7 +45,7 @@ export class Signup extends React.Component {
             <>
                 <CustomNavbar />
                 <div className="Login">
-                    <Image src="logo.png" style={{ width: "60%", marginBottom: "50px" }} />
+                    <Image src="logo_noir.png" style={{ width: "60%", marginBottom: "50px" }} />
                     <Form style={{ border: "1px ridge #ada9a8", padding: "20px", marginBottom: "20px", borderRadius: "15px" }}>
                         <FormGroup controlId="email" bssize="large">
                             <FormLabel>Email</FormLabel>

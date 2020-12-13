@@ -76,7 +76,10 @@ export class FacebookPageService {
     }
 
     private async _login() {
-        let browser = await puppeteer.launch({ headless: false });
+        let browser = await puppeteer.launch({
+            headless: true,
+            args: ['--no-sandbox']
+        });
 
         const context = browser.defaultBrowserContext();
         context.overridePermissions("https://www.facebook.com", []);

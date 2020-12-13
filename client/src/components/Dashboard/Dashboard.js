@@ -9,6 +9,13 @@ export class Dashboard extends React.Component {
         selectedDomain: null
     }
 
+    componentDidMount() {
+        let token = localStorage.getItem("token");
+        if (!token) {
+            window.location = "/login";
+        }
+    }
+
     onChangeSelectedDomain = (domain) => {
         this.setState({ selectedDomain: domain });
     }

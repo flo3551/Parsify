@@ -41,8 +41,10 @@ export class CustomNavbar extends React.Component {
                         <Navbar.Brand href="/">
                             <img
                                 alt=""
-                                src="logo_125x25.png"
+                                src="logo_blanc.png"
                                 className="d-inline-block align-top"
+                                width="125"
+                                height="31"
                             />
                         </Navbar.Brand>
                     </Col>

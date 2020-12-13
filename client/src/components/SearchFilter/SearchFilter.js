@@ -1,6 +1,6 @@
 import debounce from 'lodash/debounce';
 import React from "react";
-import { Col, Container, Form, FormControl, FormLabel, InputGroup, Row } from "react-bootstrap";
+import { Col, Container, Form, FormControl, FormLabel, Row } from "react-bootstrap";
 import { DateFilter } from "../DateFilter/DateFilter";
 
 export class SearchFilter extends React.Component {
@@ -81,21 +81,24 @@ export class SearchFilter extends React.Component {
         return (
             <Container className="border pt-2 pb-1 px-2" style={{ display: "block" }} >
                 <Row>
-                    <Col md={12}>
-                        <InputGroup>
-                            <FormLabel id="keyword-search-label">Recherche par mot-clé</FormLabel>
-                            <FormControl size="sm"
-                                placeholder=""
-                                aria-label="Recherche par mot-clé"
-                                aria-describedby="keyword-search-label"
-                                onChange={this.onChangeKeywordInput}
-                            />
-                        </InputGroup>
+                    <Col md={5} className="text-left">
+                        <FormLabel id="keyword-search-label">Recherche par mot-clé :</FormLabel>
+                    </Col>
+                    <Col md={7}>
+                        <FormControl size="sm"
+                            placeholder=""
+                            aria-label="Recherche par mot-clé"
+                            aria-describedby="keyword-search-label"
+                            onChange={this.onChangeKeywordInput}
+                        />
                     </Col>
                 </Row>
-                <Row>
-                    <Col md={12}>
-                        <FormControl as="select" size="xm" custom value={this.state.zoneInput} onChange={this.handleZoneChange}>
+                <Row className="pt-1">
+                    <Col md={5} className="text-left">
+                        <FormLabel id="zone-search-label">Recherche par zone :</FormLabel>
+                    </Col>
+                    <Col md={7}>
+                        <FormControl as="select" size="sm" custom value={this.state.zoneInput} onChange={this.handleZoneChange} aria-describedby="zone-search-label">
                             <option value={-1} key={-1}> &#x1F5FA;&#xFE0F; Toutes les zones</option>
                             <option value="inter">&#x1F30D; International</option>
                             <option value="fr">&#x1F950;  France</option>
@@ -103,27 +106,27 @@ export class SearchFilter extends React.Component {
                     </Col>
                 </Row>
                 <Row >
-                    <Col md={12} className="align-self-center">
-                        <InputGroup>
-                            <input
-                                name="enableDateSearch"
-                                type="checkbox"
-                                checked={this.state.enableDateSearch}
-                                onChange={this.handleEnableDateSearch}
-                                style={{ marginRight: "5px" }} />
+                    <Col md={12} className="text-left">
+                        <input
+                            name="enableDateSearch"
+                            type="checkbox"
+                            checked={this.state.enableDateSearch}
+                            onChange={this.handleEnableDateSearch}
+                            style={{ marginRight: "5px" }} />
                                 Recherche par date de création
-                            <DateFilter onDateFiltersChange={this.handleDateFilterChange} enabled={this.state.enableDateSearch} />
-                        </InputGroup>
+                    </Col>
+                    <Col md={12} className="align-self-start">
+                        <DateFilter onDateFiltersChange={this.handleDateFilterChange} enabled={this.state.enableDateSearch} />
                     </Col>
                 </Row>
-                <Row>
-                    <Col md={7} className="align-self-center">
+                <Row className="pt-2">
+                    <Col md={7} className="text-left">
                         <Form.Group>
-                            <Form.Check type="checkbox" label="Afficher mes domaines favoris" checked={this.state.isFavoriteChecked} onChange={this.onCheckedFavorites} />
+                            <Form.Check type="checkbox" label="Afficher mes domaines favoris &#x2B50;" checked={this.state.isFavoriteChecked} onChange={this.onCheckedFavorites} />
                         </Form.Group>
                     </Col>
                     <Col md={5} className="align-self-center">
-                        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                        <div style={{ display: "flex", justifyContent: "flex-end", borderLeft: "1px" }}>
                             <Form.Label className="text-muted" style={{ fontSize: "0.8rem", marginRight: "5px", display: "flex", alignItems: "center" }}>Résultats</Form.Label>
                             <FormControl as="select" size="xm" custom style={{ width: "65px", fontSize: "0.8rem" }} onChange={this.handleChangeResultsPerPage}>
                                 <option value="25">25</option>

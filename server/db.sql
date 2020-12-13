@@ -34,8 +34,9 @@ CREATE TABLE `facebook_page` (
 	`pageName` VARCHAR(100),
 	`pageLink` VARCHAR(150),
 	`domainName` VARCHAR(100),
-	FOREIGN KEY (domainName) REFERENCES domains(domainName)
-)
+	FOREIGN KEY (`domainName`) REFERENCES `domains` (`domainName`)
+	
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `file_infos` (
 	`filePath` VARCHAR(100) NOT NULL DEFAULT '',
@@ -44,6 +45,15 @@ CREATE TABLE `file_infos` (
 	 `zone` varchar(10) DEFAULT NULL,
 	PRIMARY KEY (`filePath`)
 )
+
+CREATE TABLE `user_domains_favorites` (
+	`domainName` VARCHAR(100) NOT NULL DEFAULT '',
+	`login` VARCHAR(100) NOT NULL DEFAULT '',
+	PRIMARY KEY (`domainName`, `login`),
+	CONSTRAINT `FK_USER` FOREIGN KEY (`login`) REFERENCES `users` (`email`),
+	CONSTRAINT `FK_DOMAINS` FOREIGN KEY (`domainName`) REFERENCES `domains` (`domainName`)
+)
+
 
 -- Les données exportées n'étaient pas sélectionnées.
 

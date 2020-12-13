@@ -89,9 +89,11 @@ export class DateFilter extends React.Component {
     _renderDatePicker = () => {
         let render =
             <Row>
-                <Col md={2}>
-                    <span>Du</span>
-                </Col>
+                {this.state.dateType === "rangeDate" &&
+                    <Col md={2}>
+                        <span>Du</span>
+                    </Col>
+                }
                 <Col md={10}>
                     <DatePicker
                         selected={this.state.pickerStartDate}
@@ -135,9 +137,9 @@ export class DateFilter extends React.Component {
 
     render() {
         return (
-            <Container>
+            <Container className="pt-1">
                 <Row>
-                    <Col md={4} className="align-self-center">
+                    <Col md={4} className="text-left">
                         <FormControl as="select" size="sm" custom style={{ width: "90px" }} onChange={this.handleChangeDateType} disabled={!this.props.enabled}>
                             <option value="exactDate">Le</option>
                             <option value="beforeDate">Avant le</option>

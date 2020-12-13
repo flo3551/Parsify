@@ -60,10 +60,10 @@ export class FacebookPageService {
 
                             this.insertFacebookPage(pageName, pageLink, domainName);
 
-                            browser.close()
                         } else {
                             pageName = null;
                         }
+                        browser.close()
                     } catch (error: any) {
                         console.log(error);
                         Promise.reject(error);

@@ -40,6 +40,7 @@ export class FileFormatConverter {
             }).auth(this.ZAMZAR_API_KEY, '', true);
         })
             .then((jobId: any) => {
+
                 return jobId;
             })
             .catch((error: any) => {
@@ -48,7 +49,7 @@ export class FileFormatConverter {
             })
     }
 
-    private _getTargetFileId(jobId: number) {
+    public _getTargetFileId(jobId: number) {
         return this._checkJobConversionStatus(jobId)
             .then((job: any) => {
                 let jobConversion: JobConversion = job;
@@ -61,7 +62,7 @@ export class FileFormatConverter {
             })
     }
 
-    private _checkJobConversionStatus(jobId: number) {
+    public _checkJobConversionStatus(jobId: number) {
         let getJobStatusPromise = new Promise((resolve: any, reject: any) => {
             request.get('https://api.zamzar.com/v1/jobs/' + jobId, (error: any, response: any, JSONBody: any) => {
                 if (error) {
@@ -89,7 +90,7 @@ export class FileFormatConverter {
             })
     }
 
-    private _handleCheckJobStatusRetry(successCallback: any, failureCallback: any, jobId: any) {
+    public _handleCheckJobStatusRetry(successCallback: any, failureCallback: any, jobId: any) {
         const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
         return wait(10 * 1000)
             .then(() => {
@@ -103,7 +104,9 @@ export class FileFormatConverter {
             })
     }
 
-    private _hasConversionJobFinished(job: JobConversion) {
+    public _hasConversionJobFinished(job: JobConversion) {
+        console.log("jobStatus", job.status);
+
         let hasFinished;
         switch (job.status) {
             case "successful":
@@ -123,7 +126,7 @@ export class FileFormatConverter {
         return hasFinished
     }
 
-    private _downloadPngFile(fileId: number, outputFileName: string, outputPath: string) {
+    public _downloadPngFile(fileId: number, outputFileName: string, outputPath: string) {
         let file = fs.createWriteStream(outputPath + outputFileName + '.png')
 
         return new Promise((resolve: any, reject: any) => {

@@ -43,10 +43,13 @@ export class ImageHelper {
                         this._extractImage(path + fileName, (newHeight * 2) - 1, width, newHeight, path + thirdOutputFileName, resolve, reject)
                     })
                 ])
-                .then(imagePartsPaths => {
-                    fs.unlinkSync(path + fileName);
-                    return imagePartsPaths;
-                })
+                    .then(imagePartsPaths => {
+                        fs.unlinkSync(path + fileName);
+                        return imagePartsPaths;
+                    }).catch(error => {
+                        console.log(error);
+                        return Promise.reject(error);
+                    })
             })
     }
 

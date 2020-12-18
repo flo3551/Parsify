@@ -66,6 +66,7 @@ export class FacebookPageService {
                         browser.close()
                     } catch (error: any) {
                         console.log(error);
+                        browser.close();
                         Promise.reject(error);
                     }
                 } else {

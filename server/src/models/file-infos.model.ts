@@ -26,8 +26,6 @@ export class FileInfos {
             linesCount++;
         }
 
-        console.log("linesCount", linesCount);
-
         return linesCount;
     }
 }

@@ -4,6 +4,9 @@ const axios = require('axios')
 
 export class OCRHelper {
     private readonly OCR_API_KEY = "16dcd8d84b88957";
+    // private readonly OCR_API_KEY = "f0e98fa7cc88957";
+    // private readonly OCR_API_KEY = "4f4f70b8f388957";
+    // private readonly OCR_API_KEY = "aad9ce26c188957";
 
     private readonly OCR_API_ENDPOINT = "https://api.ocr.space/parse/image";
     constructor() { }
@@ -18,10 +21,6 @@ export class OCRHelper {
         }
 
         return this._executeQueuingPromises(promisesStack)
-            .then(() => {
-                console.log("FINISHED !");
-
-            })
             .catch((error: any) => {
                 console.log(error);
             })
@@ -41,12 +40,7 @@ export class OCRHelper {
     public createCallOcrApi(filePath: string, outputFile: string) {
         return () => {
             let data = new FormData();
-
-            console.log("call OCR ", filePath);
-
             return new Promise((resolve: any, reject: any) => {
-                console.log("promise CALL OCR");
-
                 data.append('file', fs.createReadStream(filePath));
                 data.append('scale', 'true');
                 data.append('filetype', 'png');
@@ -64,8 +58,6 @@ export class OCRHelper {
 
                 axios(config)
                     .then((response: any) => {
-                        console.log("call over");
-
                         if (response.data.IsErroredOnProcessing) {
                             return Promise.reject(response.data);
                         }
@@ -75,8 +67,6 @@ export class OCRHelper {
                         resolve();
                     })
                     .catch((error: any) => {
-                        console.log("call error");
-
                         console.log(error);
                         reject(error);
                     });

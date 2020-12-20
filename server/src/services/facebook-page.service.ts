@@ -65,12 +65,12 @@ export class FacebookPageService {
                         }
                         browser.close()
                     } catch (error: any) {
-                        console.log(error);
+                        console.log("[LOG] [ERROR] Error while looking for Facebook page", error);
                         browser.close();
                         Promise.reject(error);
                     }
                 } else {
-                    console.log("error login");
+                    console.log("[LOG] [ERROR] No page/browser returned from Facebook login");
                 }
             })
 

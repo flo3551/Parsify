@@ -12,8 +12,6 @@ export class OCRHelper {
     constructor() { }
 
     public async saveTextFromImages(filePaths: string[], outputFile: string) {
-        console.log(outputFile);
-
         let promisesStack = [];
 
         for (let path of filePaths) {
@@ -22,7 +20,7 @@ export class OCRHelper {
 
         return this._executeQueuingPromises(promisesStack)
             .catch((error: any) => {
-                console.log(error);
+                console.log("[LOG] [ERROR] saveTextFromImages ", error);
             })
     }
 
@@ -44,7 +42,7 @@ export class OCRHelper {
                 data.append('file', fs.createReadStream(filePath));
                 data.append('scale', 'true');
                 data.append('filetype', 'png');
-                data.append('OCREngine', 1);
+                // data.append('OCREngine', 1);
 
                 let config = {
                     method: 'post',
@@ -67,10 +65,13 @@ export class OCRHelper {
                         resolve();
                     })
                     .catch((error: any) => {
-                        console.log(error);
+                        console.log("[LOG] [ERROR] Axios Call OCR ", error);
                         reject(error);
                     });
-            });
+            })
+                .catch(error => {
+                    console.log("[LOG] [ERROR] Create Call OCR API ", error);
+                });
         }
     }
 }

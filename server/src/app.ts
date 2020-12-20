@@ -16,14 +16,14 @@ export class App {
     }
 
     public async init() {
-        let domainRetrieverJob = schedule.scheduleJob('08 23 * * *', async () => {
-            let afnic_domainRetrieverService = new AfnicDomainRetrieverService();
-            await afnic_domainRetrieverService.downloadYesterdayRegisteredDomains();
+        let domainRetrieverJob = schedule.scheduleJob('50 19 * * *', async () => {
             let whoIsDownload_domainRetrieverService = new WhoIsDownloadDomainRetrieverService();
             whoIsDownload_domainRetrieverService.downloadYesterdayRegisteredDomains();
         });
+        let afnic_domainRetrieverService = new AfnicDomainRetrieverService();
+        await afnic_domainRetrieverService.downloadYesterdayRegisteredDomains();
 
-        this.restartParsingInProgress();
+        // this.restartParsingInProgress();
     }
 
     private restartParsingInProgress() {
@@ -46,7 +46,7 @@ export class App {
                 }
             })
             .catch(error => {
-                console.log("Error retrieving files in progress", error);
+                console.log("[LOG] [ERROR] retrieving file in progress ", error);
             })
     }
 }

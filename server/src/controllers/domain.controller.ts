@@ -30,6 +30,8 @@ export class DomainController {
                     });
                 })
                 .catch((error: any) => {
+                    console.log("[LOG] [ERROR] domain.controller => getDomainsForPageAndFilters : ", error);
+
                     res.status(500).json(
                         { error: "Erreur lors de la récupération des stores" }
                     )
@@ -52,6 +54,8 @@ export class DomainController {
                 });
             })
             .catch((error: any) => {
+                console.log("[LOG] [ERROR] domain.controller => getFavoritesDomains : ", error);
+
                 return res.status(500).json(
                     { error: "Erreur lors de la récupération des stores favoris" }
                 )
@@ -76,6 +80,8 @@ export class DomainController {
                     });
                 })
                 .catch((error: any) => {
+                    console.log("[LOG] [ERROR] domain.controller => getDomainsCount : ", error);
+
                     return res.status(500).json(
                         { error: "Erreur lors de la récupération des stores" }
                     )
@@ -98,6 +104,8 @@ export class DomainController {
                 });
             })
             .catch((error: any) => {
+                console.log("[LOG] [ERROR] domain.controller => getCountFavoritesDomains : ", error);
+
                 return res.status(500).json(
                     { error: "Erreur lors de la récupération des stores" }
                 )
@@ -121,6 +129,8 @@ export class DomainController {
                 });
             })
             .catch((error: any) => {
+                console.log("[LOG] [ERROR] domain.controller => isDomainFavorited : ", error);
+
                 return res.status(500).json(
                     { error: "Erreur lors de la récupération des stores" }
                 )
@@ -150,6 +160,8 @@ export class DomainController {
                 });
             })
             .catch((error: any) => {
+                console.log("[LOG] [ERROR] domain.controller => getDomainsScreenshot : ", error);
+
                 browser.close();
 
                 return res.status(500).json(
@@ -175,6 +187,8 @@ export class DomainController {
                 return res.status(200);
             })
             .catch((error: any) => {
+                console.log("[LOG] [ERROR] domain.controller => addFavoriteDomain : ", error);
+
                 return res.status(500).json(
                     { error: "Erreur lors de l'ajout d'un domaine aux favoris" }
                 )
@@ -194,6 +208,8 @@ export class DomainController {
                 return res.status(200);
             })
             .catch((error: any) => {
+                console.log("[LOG] [ERROR] domain.controller => deleteFavoriteDomain : ", error);
+
                 return res.status(500).json(
                     { error: "Erreur lors de la suppression d'un domaine aux favoris" }
                 )

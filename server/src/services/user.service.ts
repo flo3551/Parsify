@@ -10,9 +10,9 @@ export class UserService {
 
     private readonly COUNT_USERS_BY_EMAIL = "SELECT COUNT(email) as nbUsers from users WHERE email = ?";
     private readonly INSERT_USER = "INSERT INTO users(email, password) VALUES(?, ?)";
-    private readonly SELECT_COUNT_USER_BY_EMAIL_PASSWORD = "SELECT count(email) as credentialMatchs FROM users WHERE email = ? AND password = ?"
     private readonly SELECT_USER_BY_EMAIL = "SELECT email, password, createdAt, lastConnectionDate FROM users WHERE email = ?";
     private readonly UPDATE_USER_CONNECTION_DATE = "UPDATE users SET lastConnectionDate = ? WHERE email = ?"
+
     constructor() {
         this.db = new MysqlHelper();
     }
@@ -24,6 +24,10 @@ export class UserService {
             .then((results: any) => {
                 return Promise.resolve(results[0].nbUsers > 0);
             })
+            .catch(error => {
+                console.log("[LOG] [ERROR] doesUserExists", error);
+                return Promise.reject(error);
+            })
     }
 
     public insertUser(email: string, password: string): any {
@@ -33,12 +37,14 @@ export class UserService {
             .then((results: any) => {
                 return Promise.resolve(results[0]);
             })
+            .catch(error => {
+                console.log("[LOG] [ERROR] insertUser", error);
+                return Promise.reject(error);
+            })
     }
 
     public areCredentialsValid(email: string, password: string): any {
-        // return new Promise((resolve, reject) => {
         return this.selectUserByEmail(email)
-            // })
             .then((user: any) => {
                 let areCredentialsValid = false
                 if (user && passwordHash.verify(password, user.password)) {
@@ -46,6 +52,10 @@ export class UserService {
                 }
 
                 return Promise.resolve(areCredentialsValid);
+            })
+            .catch(error => {
+                console.log("[LOG] [ERROR] areCredentialsValid", error);
+                return Promise.reject(error);
             })
     }
 
@@ -55,6 +65,10 @@ export class UserService {
         })
             .then((results: any) => {
                 return Promise.resolve(this._mapResultToUser(results[0]));
+            })
+            .catch(error => {
+                console.log("[LOG] [ERROR] selectUserByEmail", error);
+                return Promise.reject(error);
             })
     }
 
@@ -67,6 +81,10 @@ export class UserService {
 
             this.db.query(this.UPDATE_USER_CONNECTION_DATE, [date, email], resolve, reject);
         })
+            .catch(error => {
+                console.log("[LOG] [ERROR] updateUserLastConnection", error);
+                return Promise.reject(error);
+            })
     }
 
     private _mapResultToUser(results: any): User {

@@ -19,6 +19,7 @@ export class FileFormatConverter {
                 return this._downloadPngFile(targetFileId, outputFileNameWithoutExtension, outputFilePath);
             })
             .catch(error => {
+                console.log("[LOG] [ERROR] Converting Gif to PNG", error);
                 return Promise.reject(error);
             })
     }
@@ -44,7 +45,7 @@ export class FileFormatConverter {
                 return jobId;
             })
             .catch((error: any) => {
-                console.log(error);
+                console.log("[LOG] [ERROR] Starting zamzar conversion job", error);
                 Promise.reject(error);
             })
     }
@@ -57,7 +58,7 @@ export class FileFormatConverter {
                 return Promise.resolve(jobConversion.targetFiles[0].id)
             })
             .catch(error => {
-                console.log(error);
+                console.log("[LOG] [ERROR] Getting Zamzar target file's id", error);
                 Promise.reject(error);
             })
     }
@@ -66,6 +67,7 @@ export class FileFormatConverter {
         let getJobStatusPromise = new Promise((resolve: any, reject: any) => {
             request.get('https://api.zamzar.com/v1/jobs/' + jobId, (error: any, response: any, JSONBody: any) => {
                 if (error) {
+                    console.log("[LOG] [ERROR] Checking job conversion status", error);
                     reject(error);
                 } else {
                     let body: any = JSON.parse(JSONBody);
@@ -85,7 +87,7 @@ export class FileFormatConverter {
                 return Promise.resolve(job);
             })
             .catch((error: any) => {
-                console.log(error);
+                console.log("[LOG] [ERROR] Checking job conversion status", error);
                 Promise.reject(error);
             })
     }
@@ -105,8 +107,6 @@ export class FileFormatConverter {
     }
 
     public _hasConversionJobFinished(job: JobConversion) {
-        console.log("jobStatus", job.status);
-
         let hasFinished;
         switch (job.status) {
             case "successful":
@@ -132,7 +132,7 @@ export class FileFormatConverter {
         return new Promise((resolve: any, reject: any) => {
             request.get({ url: 'https://api.zamzar.com/v1/files/' + fileId + '/content', followRedirect: false }, (err: any, response: any, body: any) => {
                 if (err) {
-                    console.error('Unable to download file:', err);
+                    console.log("[LOG] [ERROR] Unable to download PNG converted file ", err);
                     reject(err);
                 } else {
                     // We are being redirected

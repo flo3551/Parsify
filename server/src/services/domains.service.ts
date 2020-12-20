@@ -30,6 +30,10 @@ export class DomainsService {
             .then((results: any) => {
                 return Promise.resolve(results[0].nbDomains);
             })
+            .catch(error => {
+                console.log("[LOG] [ERROR] countDomainsWithFilters", error);
+                return Promise.reject(error);
+            })
     }
 
     public countDomainsFavorites(login: string) {
@@ -39,6 +43,10 @@ export class DomainsService {
             .then((results: any) => {
                 return Promise.resolve(results[0].nbDomains);
             })
+            .catch(error => {
+                console.log("[LOG] [ERROR] countDomainsFavorites", error);
+                return Promise.reject(error);
+            })
     }
 
     public getCountDomainsFavoriteMatchs(login: string, domainName: string) {
@@ -47,6 +55,10 @@ export class DomainsService {
         })
             .then((results: any) => {
                 return Promise.resolve(results[0].nbDomains);
+            })
+            .catch(error => {
+                console.log("[LOG] [ERROR] getCountDomainsFavoriteMatchs", error);
+                return Promise.reject(error);
             })
     }
 
@@ -58,7 +70,6 @@ export class DomainsService {
                 return Promise.resolve(this._mapResultsToDomains(results));
             })
             .catch(error => {
-                console.log(error);
                 return Promise.reject(error);
             })
     }
@@ -71,7 +82,7 @@ export class DomainsService {
                 return Promise.resolve(this._mapResultsToDomains(results));
             })
             .catch(error => {
-                console.log(error);
+                console.log("[LOG] [ERROR] getFavoritesDomains", error);
                 return Promise.reject(error);
             })
     }
@@ -82,6 +93,10 @@ export class DomainsService {
         })
             .then((results: any) => {
                 return Promise.resolve();
+            })
+            .catch(error => {
+                console.log("[LOG] [ERROR] insertDomain", error);
+                return Promise.reject(error);
             })
     }
 
@@ -94,7 +109,7 @@ export class DomainsService {
                 return Promise.resolve();
             })
             .catch((error: any) => {
-                console.log(error);
+                console.log("[LOG] [ERROR] addDomainToFavorites", error);
                 return Promise.reject(error)
             })
     }
@@ -107,7 +122,7 @@ export class DomainsService {
                 return Promise.resolve();
             })
             .catch((error: any) => {
-                console.log(error);
+                console.log("[LOG] [ERROR] deleteDomainFromFavorites", error);
                 return Promise.reject(error)
             })
     }

@@ -24,7 +24,7 @@ export class FileService {
                 return Promise.resolve();
             })
             .catch(error => {
-                console.log(error);
+                console.log("[LOG] [ERROR] insertFileInfos", error);
                 return Promise.reject(error);
             })
     }
@@ -48,7 +48,7 @@ export class FileService {
                 return Promise.resolve(fileInfos);
             })
             .catch(error => {
-                console.log(error);
+                console.log("[LOG] [ERROR] getFileInfos", error);
                 return Promise.reject(error);
             })
     }
@@ -61,7 +61,8 @@ export class FileService {
                 return Promise.resolve();
             })
             .catch(error => {
-                console.log(error);
+                console.log("[LOG] [ERROR] updateParsedCount", error);
+                return Promise.reject(error);
             })
     }
 
@@ -73,7 +74,7 @@ export class FileService {
                 return Promise.resolve(this._mapResultsToFileInfosList(results));
             })
             .catch(error => {
-                console.log(error);
+                console.log("[LOG] [ERROR] getFilesInProgress", error);
                 return Promise.reject(error);
             })
     }

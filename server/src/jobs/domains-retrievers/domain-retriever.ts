@@ -87,13 +87,14 @@ export class DomainRetriever {
                         }
                     })
                     .catch(error => {
+                        console.log("[LOG] [ERROR] Queing task for domain checking :", error);
                         console.error(error);
                     });
 
 
             })
         } else {
-            console.log("CLUSTER NOT LAUNCHED !")
+            console.log("[LOG] CLUSTER NOT LAUNCHED !")
         }
     }
 }

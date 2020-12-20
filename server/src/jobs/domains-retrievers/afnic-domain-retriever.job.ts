@@ -45,7 +45,7 @@ export class AfnicDomainRetrieverService extends DomainRetriever {
                 this.readTxtFile(this.DOWNLOADED_FILE_OUTPUT_DIR + this.downloadedFileNameNoExtension + this.TXT_FILE_EXTENSION);
             })
             .catch(error => {
-                console.log(error);
+                console.log("[LOG] [ERROR] Download AFNIC domains " + this.dateRegistrationDomain.toString(), error);
             })
     }
 

@@ -39,7 +39,7 @@ export class UserController {
                 token: user.getNewToken()
             });
         } catch (error) {
-            console.log("error", error);
+            console.log("[LOG] [ERROR] user.controller => signup : ", error);
             return res.status(500).json({ error });
         }
     }
@@ -70,7 +70,7 @@ export class UserController {
                 text: "Authentification réussie."
             });
         } catch (error) {
-            console.log(error);
+            console.log("[LOG] [ERROR] user.controller => login : ", error);
             return res.status(500).json({
                 error
             });

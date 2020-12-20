@@ -33,13 +33,8 @@ app.get('/', function (req: any, res: any) {
     res.send('hello world');
 });
 
-//On définit la route Hello
-app.get('/hello', (req: any, res: any) => {
-    res.json("Hello World")
-})
-
 app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`);
+    console.log(`Parsify app's now listening at http://localhost:${port}`);
     let app = new App();
     app.init();
 })

@@ -17,7 +17,7 @@ export class ImageHelper {
                 return Promise.resolve(dimensions);
             })
             .catch((error: any) => {
-                console.log("error getting image dimensions " + path + " [" + error + "]");
+                console.log("[LOG] [ERROR] Getting image dmmensions " + path, error);
             })
     }
 
@@ -47,7 +47,7 @@ export class ImageHelper {
                         fs.unlinkSync(path + fileName);
                         return imagePartsPaths;
                     }).catch(error => {
-                        console.log(error);
+                        console.log("[LOG] [ERROR] Error splitting image in 3 parts", error);
                         return Promise.reject(error);
                     })
             })
@@ -61,7 +61,7 @@ export class ImageHelper {
                 .extract({ left: 0, top: top, width: width - 1, height: height })
                 .toFile(outputFilePath, (err: any, info: any) => {
                     if (err) {
-                        console.log(err);
+                        console.log("[LOG] [ERROR] extracting image", err);
                         failureCallback(err);
                     }
 

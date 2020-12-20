@@ -35,7 +35,7 @@ export class WhoIsDownloadDomainRetrieverService extends DomainRetriever {
             });
         }).on('error', function (err: any) {
             // Handle errors
-            console.log("[LOG] ", "Download error");
+            console.log("[LOG] [ERROR] downloading .com file ", err);
         });
     }
 
@@ -57,7 +57,7 @@ export class WhoIsDownloadDomainRetrieverService extends DomainRetriever {
         try {
             fs.unlink(this.DOWNLOADED_FILE_OUTPUT_DIR + this.downloadedFileName, () => { });
         } catch (error) {
-            console.log(error);
+            console.log("[LOG] [ERROR] Unzipping file" + path, error);
         }
     }
 
@@ -82,7 +82,7 @@ export class WhoIsDownloadDomainRetrieverService extends DomainRetriever {
                 lineIndex++;
             }
         } else {
-            console.log("File infos not found for ", filePath);
+            console.log("[LOG] File infos not found for ", filePath);
         }
     }
 

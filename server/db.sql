@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `email` varchar(100) NOT NULL DEFAULT '',
   `password` varchar(100) NOT NULL DEFAULT '',
   `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
+  `lastConnectionDate` VARCHAR(100) NULL DEFAULT NULL,
   PRIMARY KEY (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -52,7 +53,8 @@ CREATE TABLE `user_domains_favorites` (
 	PRIMARY KEY (`domainName`, `login`),
 	CONSTRAINT `FK_USER` FOREIGN KEY (`login`) REFERENCES `users` (`email`),
 	CONSTRAINT `FK_DOMAINS` FOREIGN KEY (`domainName`) REFERENCES `domains` (`domainName`)
-)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
 -- Les données exportées n'étaient pas sélectionnées.

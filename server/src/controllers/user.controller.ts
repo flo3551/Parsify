@@ -63,6 +63,7 @@ export class UserController {
                 });
             }
             const user: User = await this.userService.selectUserByEmail(email);
+            await this.userService.updateUserLastConnection(email);
 
             return res.status(200).json({
                 token: user.getNewToken(),
